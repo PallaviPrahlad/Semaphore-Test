@@ -1,0 +1,11 @@
+---
+- name: Configure Windows Password Policy without win_password_policy
+  hosts: winhosts
+  gather_facts: no
+  tasks:
+    - name: Ensure 'Enforce password history' is set to 24 or more
+      win_shell: |
+        secedit /export /cfg C:\secpol.cfg
+        (Get-Content C:\secpol.cfg) -replace 'PasswordHistorySize = \d+', 'PasswordHistorySize = 24' | Set-Content C:\secpol.cfg
+        secedit /configure /db C:\Windows\Security\Database\secedit.sdb /cfg C:\secpol.cfg /areas SECURITYPOLICY
+        Remove-Item C:\secpol.cfg -Force
