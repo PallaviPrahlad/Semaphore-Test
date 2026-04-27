@@ -1,0 +1,31 @@
+- name: Audit - Enforce Password History
+  hosts: winhosts
+  gather_facts: no
+  tasks:
+    - name: Get current password history setting
+      win_shell: net accounts
+      register: net_accounts_output
+
+    - name: Show raw output
+      debug:
+        var: net_accounts_output.stdout_lines
+
+    - name: Check if password history is 24 or more
+      win_shell: |
+        $output = net accounts | Out-String
+        $output = $output -replace "`r","" -replace "`n",""
+        if ($output -match "Length of password history maintained: \s+(\d+)") {
+            $value = [int]($matches[1])
+            if ($value -ge 24) {
+                Write-Output "COMPLIANT: Password history is $value"
+            } else {
+                Write-Output "NON-COMPLIANT: Password history is $value"
+            }
+        } else {
+            Write-Output "Unable to parse password history setting"
+        }
+      register: compliance_check
+
+    - name: Report compliance
+      debug:
+        msg: "{{ compliance_check.stdout }}"
