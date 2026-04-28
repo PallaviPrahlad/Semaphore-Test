@@ -1,0 +1,44 @@
+---
+- name: Audit Windows Print Spooler Service
+  hosts: winhosts
+  gather_facts: true
+  vars:
+    service_name: spooler
+    impact: 1  
+
+  tasks:
+    - name: Get Spooler service information
+      ansible.windows.win_service_info:
+        name: "{{ service_name }}"
+      register: service_info
+
+    - name: Decide audit result
+      set_fact:
+        audit_result: >-
+          {% if service_info.services | length == 0 %}
+          FAILED
+          {% elif service_info.services[0].state == 'started' %}
+          PASSED
+          {% else %}
+          FAILED
+          {% endif %}
+
+    - name: Display audit result
+      ansible.builtin.debug:
+        msg: "Audit result for {{ service_name }} on {{ inventory_hostname }}: {{ audit_result }}"
+    
+    - name: Add header row to CSV (only once)
+      local_action:
+        module: lineinfile
+        path: /tmp/test.csv
+        line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Expected"
+        create: yes
+        insertafter: BOF
+      run_once: true       
+    
+    - name: Write audit result to CSV
+      local_action:
+        module: lineinfile
+        path: /tmp/test.csv
+        line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (MS only),{{ impact }},{{ audit_result }},{{ service_info.services[0].start_mode | default('N/A') }}"
+        create: yes
