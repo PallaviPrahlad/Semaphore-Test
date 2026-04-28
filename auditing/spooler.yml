@@ -1,11 +1,11 @@
 ---
-- name: Audit Windows Print Spooler Service
+- name: Audit Windows Print Spooler Service is set to stopped
   hosts: winhosts
   gather_facts: true
   vars:
     service_name: spooler
     impact: 1  
-
+    expected_value: stopped
   tasks:
     - name: Get Spooler service information
       ansible.windows.win_service_info:
@@ -18,9 +18,9 @@
           {% if service_info.services | length == 0 %}
           FAILED
           {% elif service_info.services[0].state == 'started' %}
-          PASSED
-          {% else %}
           FAILED
+          {% else %}
+          PASSED
           {% endif %}
 
     - name: Display audit result
@@ -31,7 +31,7 @@
       local_action:
         module: lineinfile
         path: /tmp/test.csv
-        line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Expected"
+        line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
         create: yes
         insertafter: BOF
       run_once: true       
@@ -40,5 +40,5 @@
       local_action:
         module: lineinfile
         path: /tmp/test.csv
-        line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (MS only),{{ impact }},{{ audit_result }},{{ service_info.services[0].start_mode | default('N/A') }}"
+        line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (MS only),{{ impact }},{{ audit_result }},{{ service_info.services[0].state | default('N/A') }},{{ expected_value }}"
         create: yes

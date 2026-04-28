@@ -1,6 +1,7 @@
+---
 - name: Audit - Enforce Password History
   hosts: winhosts
-  gather_facts: no
+  gather_facts: yes   # needed for ansible_fqdn, ansible_os_name, etc.
   tasks:
     - name: Get current password history setting
       win_shell: net accounts
@@ -17,15 +18,26 @@
         if ($output -match "Length of password history maintained: \s+(\d+)") {
             $value = [int]($matches[1])
             if ($value -ge 24) {
-                Write-Output "COMPLIANT: Password history is $value"
+                Write-Output "Passed,$value"
             } else {
-                Write-Output "NON-COMPLIANT: Password history is $value"
+                Write-Output "Failed,$value"
             }
         } else {
-            Write-Output "Unable to parse password history setting"
+            Write-Output "UNKNOWN,0"
         }
       register: compliance_check
 
-    - name: Report compliance
-      debug:
-        msg: "{{ compliance_check.stdout }}"
+    - name: Parse compliance result
+      set_fact:
+        audit_result: "{{ compliance_check.stdout.split(',')[0] }}"
+        history_value: "{{ compliance_check.stdout.split(',')[1] | trim | default('N/A') }}"
+        impact: "1"
+        env: "Production"
+        expected_value: "24"  
+
+    - name: Write audit result to CSV
+      local_action:
+        module: lineinfile
+        path: /tmp/test.csv
+        line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Enforce password history' is set to '24 or more',{{ impact }},{{ audit_result }},{{ history_value }},{{ expected_value }}"
+        create: yes
