@@ -1,7 +1,8 @@
 # roles/print_spooler_audit/tasks/main.yml
 - name: Get Spooler service information
   ansible.windows.win_service_info:
-    name: "{{ service_name }}"
+    #name: "{{ service_name }}"
+    name: spooler
   register: service_info
 
 - name: Decide audit result
