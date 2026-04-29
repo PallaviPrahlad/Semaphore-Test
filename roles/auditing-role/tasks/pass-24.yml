@@ -25,8 +25,8 @@
 
 - name: Parse compliance result
   set_fact:
-    audit_result: "{{ compliance_check.stdout | trim | split(',')[0] }}"
-    history_value: "{{ compliance_check.stdout | trim | split(',')[1] | default('N/A') }}"
+    audit_result: "{{ (compliance_check.stdout | trim | split(','))[0] }}"
+    history_value: "{{( compliance_check.stdout | trim | split(','))[1] | default('N/A') }}"
     impact: "1"
     env: "Production"
     expected_value_pw_history: "24"
