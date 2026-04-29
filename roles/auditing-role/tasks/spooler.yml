@@ -3,6 +3,7 @@
   ansible.windows.win_service_info:
     #name: "{{ service_name }}"
     name: spooler
+    expected_value_print_spooler: 24
   register: service_info
 
 - name: Decide audit result
