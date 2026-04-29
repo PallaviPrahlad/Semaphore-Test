@@ -5,7 +5,7 @@
   vars:
     service_name: spooler
     impact: 1  
-    expected_value: stopped
+    expected_value_print_spooler: stopped
   tasks:
     - name: Get Spooler service information
       ansible.windows.win_service_info:
@@ -40,5 +40,5 @@
       local_action:
         module: lineinfile
         path: /tmp/test.csv
-        line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (MS only),{{ impact }},{{ audit_result }},{{ service_info.services[0].state | default('N/A') }},{{ expected_value }}"
+        line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (MS only),{{ impact }},{{ audit_result }},{{ service_info.services[0].state | default('N/A') }},{{ expected_value_print_spooler }}"
         create: yes
