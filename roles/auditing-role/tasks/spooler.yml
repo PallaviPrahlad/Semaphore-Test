@@ -1,4 +1,3 @@
----
 - name: Audit Windows Print Spooler Service is set to stopped
   #hosts: winhosts
   gather_facts: true
