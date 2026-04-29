@@ -1,0 +1,7 @@
+---
+- name: Main playbook for TCM hardening
+  hosts: win-hosts
+  become: yes
+  roles:
+    - hardening-role
+    - auditing-role 
