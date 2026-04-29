@@ -4,4 +4,4 @@
   become: yes
   roles:
     - hardening-role
-    - auditing-role 
+    #- auditing-role 
