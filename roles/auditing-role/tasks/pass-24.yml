@@ -1,6 +1,6 @@
 ---
 - name: Audit - Enforce Password History
-  hosts: winhosts
+  #hosts: winhosts
   gather_facts: yes   # needed for ansible_fqdn, ansible_os_name, etc.
   tasks:
     - name: Get current password history setting

@@ -1,6 +1,6 @@
 ---
 - name: Audit Windows Print Spooler Service is set to stopped
-  hosts: winhosts
+  #hosts: winhosts
   gather_facts: true
   vars:
     service_name: spooler
