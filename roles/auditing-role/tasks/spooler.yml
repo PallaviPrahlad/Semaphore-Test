@@ -1,9 +1,6 @@
-# roles/print_spooler_audit/tasks/main.yml
 - name: Get Spooler service information
   ansible.windows.win_service_info:
-    #name: "{{ service_name }}"
-    name: spooler
-    expected_value_print_spooler: 24
+    name: "{{ service_name }}"
   register: service_info
 
 - name: Decide audit result
@@ -19,7 +16,7 @@
 
 - name: Display audit result
   ansible.builtin.debug:
-    msg: "Audit result for spooler on {{ inventory_hostname }}: {{ audit_result }}"
+    msg: "Audit result for {{ service_name }} on {{ inventory_hostname }}: {{ audit_result }}"
 
 - name: Add header row to CSV (only once)
   local_action:
