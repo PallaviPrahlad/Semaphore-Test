@@ -2,3 +2,4 @@
 - import_tasks: pass-24.yml
 - import_tasks: spooler.yml
 - import_tasks: max_password.yml
+- import_tasks: min_password.yml 
