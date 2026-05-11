@@ -1,0 +1,45 @@
+---
+- name: Get account lockout threshold
+  win_command: net accounts
+  register: net_accounts_output
+
+- name: Parse account lockout threshold
+  set_fact:
+    lockout_threshold: >-
+      {{ (net_accounts_output.stdout_lines
+          | select('search', 'Lockout threshold')
+          | list
+          | first).split(':')[1]
+          | regex_replace('[^0-9]', '')
+          | int }}
+
+- name: Decide audit result
+  set_fact:
+    audit_result: >-
+      {% if (lockout_threshold | int) == 0 %}
+      FAILED
+      {% elif (lockout_threshold | int) > 5 %}
+      FAILED
+      {% else %}
+      PASSED
+      {% endif %}
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for Account lockout threshold on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ lockout_threshold }} attempts)"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempt(s), but not 0',{{ impact }},{{ audit_result }},{{ lockout_threshold | default('N/A') }},5 or fewer attempts (not 0)"
+    create: yes
