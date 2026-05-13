@@ -8,12 +8,16 @@
 
 - name: Parse 'Reset account lockout counter after'
   set_fact:
-    reset_lockout_counter: "{{ (secpol_file.stdout | regex_search('ResetLockoutCount\\s*=\\s*\\d+')) | regex_replace('.*=','') | trim | int }}"
+    reset_lockout_counter: "{{ (secpol_file.stdout | regex_search('ResetLockoutCount\\s*=\\s*\\d+')) | regex_replace('.*=','') | trim }}"
+
+- name: Convert to integer
+  set_fact:
+    reset_lockout_counter_int: "{{ reset_lockout_counter | int }}"
 
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% if reset_lockout_counter >= 15 %}
+      {% if reset_lockout_counter_int >= 15 %}
       PASSED
       {% else %}
       FAILED
@@ -21,7 +25,7 @@
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Reset account lockout counter after' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ reset_lockout_counter }} minutes)"
+    msg: "Audit result for 'Reset account lockout counter after' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ reset_lockout_counter_int }} minutes)"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -36,6 +40,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)',{{ impact }},{{ audit_result }},{{ reset_lockout_counter | default('N/A') }},15 or more minutes"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)',{{ impact }},{{ audit_result }},{{ reset_lockout_counter_int | default('N/A') }},15 or more minutes"
     create: yes
 
