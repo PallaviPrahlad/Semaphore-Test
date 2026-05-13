@@ -8,3 +8,4 @@
 - import_tasks: Account_lockout_duration.yml
 - import_tasks: Account_lockout_threshold.yml
 - import_tasks: Allow_Administration_account_lockout_set_enabled.yml
+- import_tasks: Reset_account_lockout_counter_after_set_to_15min_more.yml
