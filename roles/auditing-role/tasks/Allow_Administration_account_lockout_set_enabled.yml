@@ -8,13 +8,7 @@
 
 - name: Parse 'Allow Administrator account lockout'
   set_fact:
-    admin_lockout: >-
-      {{ (secpol_file.stdout_lines
-          | select('search', 'AllowAdministratorLockout')
-          | list
-          | first
-          | regex_replace('.*=','')
-          | trim }}
+    admin_lockout: "{{ secpol_file.stdout | regex_search('AllowAdministratorLockout\s*=\s*(\d+)', '\\1') }}"
 
 - name: Decide audit result
   set_fact:
