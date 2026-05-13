@@ -1,17 +1,15 @@
 ---
-- name: Get 'Allow Administrator account lockout' setting
+- name: Export local security policy
   win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
-  register: secedit_output
 
 - name: Read exported security policy
-  win_slurp:
-    src: C:\Windows\Temp\secpol.cfg
+  win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
 - name: Parse 'Allow Administrator account lockout'
   set_fact:
     admin_lockout: >-
-      {{ (secpol_file['content'] | b64decode).splitlines()
+      {{ (secpol_file.stdout_lines
           | select('search', 'AllowAdministratorLockout')
           | list
           | first

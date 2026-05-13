@@ -7,4 +7,4 @@
 - import_tasks: password_using_reversible_encryption.yml
 - import_tasks: Account_lockout_duration.yml
 - import_tasks: Account_lockout_threshold.yml
-- import_tasks: Allow_Administration_account_lockout.yml 
+- import_tasks: Allow_Administration_account_lockout_set_enabled.yml
