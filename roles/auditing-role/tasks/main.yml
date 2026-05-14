@@ -10,3 +10,4 @@
 - import_tasks: Allow_Administration_account_lockout_set_enabled.yml
 - import_tasks: Reset_account_lockout_counter_after_set_to_15min_more.yml
 - import_tasks: Ensure_Access_Credential_Manager_trusted_caller_set_to_No_One.yml
+- import_tasks: Ensure_Access_computer_from_network_is_set_administrators_and_authusers.yml 
