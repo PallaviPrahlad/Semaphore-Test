@@ -10,10 +10,14 @@
   set_fact:
     act_as_os: "{{ (secpol_file.stdout | regex_search('SeTcbPrivilege\\s*=.*')) | regex_replace('.*=','') | trim }}"
 
+- name: Normalize empty value
+  set_fact:
+    act_as_os: "{{ act_as_os if act_as_os != '' else 'No One' }}"
+
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% if act_as_os == "" %}
+      {% if act_as_os == 'No One' %}
       PASSED
       {% else %}
       FAILED
