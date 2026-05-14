@@ -13,7 +13,7 @@
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% if access_network == 'Administrators,Authenticated Users' %}
+      {% if access_network == '*S-1-5-11,*S-1-5-32-544' %}
       PASSED
       {% else %}
       FAILED
