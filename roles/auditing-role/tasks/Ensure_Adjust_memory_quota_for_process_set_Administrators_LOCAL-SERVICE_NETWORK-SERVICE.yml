@@ -13,7 +13,7 @@
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set expected = ['Administrators','LOCAL SERVICE','NETWORK SERVICE'] %}
+      {% set expected = ['*S-1-5-19,*S-1-5-20,*S-1-5-32-544'] %}
       {% set current = adjust_memory_quotas.split(',') | map('trim') | list %}
       {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
       PASSED
