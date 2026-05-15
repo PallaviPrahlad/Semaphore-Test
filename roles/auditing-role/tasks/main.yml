@@ -15,4 +15,5 @@
 - import_tasks: Ensure_Adjust_memory_quota_for_process_set_Administrators_LOCAL-SERVICE_NETWORK-SERVICE.yml
 - import_tasks: Ensure_Allow_log_on_locally_set_to_Administrators.yml
 - import_tasks: Ensure_Allow_log_on_through_Remote_Desktop_Services_set_to_Administrators_Remote-Desktop-Users.yml
-- import_tasks: Ensure_back_up_files_directories_is_set_to_Administrators.yml 
+- import_tasks: Ensure_back_up_files_directories_is_set_to_Administrators.yml
+- import_tasks: Ensure_Change_the_system_time_is_set_to_Administrators_LOCAL_SERVICE.yml 
