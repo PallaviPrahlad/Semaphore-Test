@@ -12,4 +12,5 @@
 - import_tasks: Ensure_Access_Credential_Manager_trusted_caller_set_to_No_One.yml
 - import_tasks: Ensure_Access_computer_from_network_is_set_administrators_and_authusers.yml
 - import_tasks: Ensure_Act_as_part_operating_system_set_to_No_One.yml
-- import_tasks: Ensure_Adjust_memory_quota_for_process_set_Administrators_LOCAL-SERVICE_NETWORK-SERVICE.yml 
+- import_tasks: Ensure_Adjust_memory_quota_for_process_set_Administrators_LOCAL-SERVICE_NETWORK-SERVICE.yml
+- import_tasks: Ensure_Allow_log_on_locally_set_to_Administrators.yml 
