@@ -36,6 +36,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Create a token object' is set to 'No One',{{ impact }},{{ audit_result }},{{ create_token_object | default('N/A') }},No One"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Create a token object' is set to 'No One',{{ impact }},{{ audit_result }},{{ create_token_object | default('N/A') }},None"
     create: yes
 
