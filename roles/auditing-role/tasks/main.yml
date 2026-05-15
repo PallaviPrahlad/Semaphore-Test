@@ -22,4 +22,5 @@
 - import_tasks: Ensure_Create_a_token_object_is_set_to_No-One.yml
 - import_tasks: Ensure_Create_global_objects_is_set_to_Administrators_LOCAL_SERVICE_NETWORK-SERVICE_SERVICE.yml
 - import_tasks: Ensure_Create_permanent_shared_objects_is_set_to_No-One.yml
-- import_tasks: Ensure_Create_symbolic_links_is_set_to_Administrators_NT-VIRTUAL_MACHINE-Virtual_Machines.yml 
+- import_tasks: Ensure_Create_symbolic_links_is_set_to_Administrators_NT-VIRTUAL_MACHINE-Virtual_Machines.yml
+- import_tasks: Ensure_Debug_programs_is_set_to_Administrators.yml 
