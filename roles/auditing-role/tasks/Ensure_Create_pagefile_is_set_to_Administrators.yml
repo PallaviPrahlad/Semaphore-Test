@@ -1,0 +1,43 @@
+---
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Create a pagefile'
+  set_fact:
+    create_pagefile: "{{ (secpol_file.stdout | regex_search('SeCreatePagefilePrivilege\\s*=.*')) | regex_replace('.*=','') | trim }}"
+
+- name: Decide audit result
+  set_fact:
+    audit_result: >-
+      {% set expected = ['*S-1-5-32-544'] %}
+      {% set current = create_pagefile.split(',') | map('trim') | list %}
+      {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
+      PASSED
+      {% else %}
+      FAILED
+      {% endif %}
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Create a pagefile' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ create_pagefile | default('None') }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Create a pagefile' is set to 'Administrators',{{ impact }},{{ audit_result }},{{ create_pagefile | default('N/A') }},*S-1-5-32-544"
+    create: yes
+
