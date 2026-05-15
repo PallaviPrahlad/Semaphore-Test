@@ -1,0 +1,41 @@
+---
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Create symbolic links'
+  set_fact:
+    create_symlinks: "{{ (secpol_file.stdout | regex_search('SeCreateSymbolicLinkPrivilege\\s*=.*')) | regex_replace('.*=','') | trim }}"
+
+- name: Decide audit result
+  set_fact:
+    audit_result: >-
+      {% if create_symlinks == '*S-1-5-32-544,*S-1-5-83-0' %}
+      PASSED
+      {% else %}
+      FAILED
+      {% endif %}
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Create symbolic links' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ create_symlinks | default('None') }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Create symbolic links' is set to 'Administrators, NT VIRTUAL MACHINE\\Virtual Machines',{{ impact }},{{ audit_result }},{{ create_symlinks | default('N/A') }},Administrators,NT VIRTUAL MACHINE\\Virtual Machines"
+    create: yes
+
