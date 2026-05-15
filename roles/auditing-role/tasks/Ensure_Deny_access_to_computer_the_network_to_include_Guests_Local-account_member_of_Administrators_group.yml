@@ -1,0 +1,43 @@
+---
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Deny access to this computer from the network'
+  set_fact:
+    deny_network: "{{ (secpol_file.stdout | regex_search('SeDenyNetworkLogonRight\\s*=.*')) | regex_replace('.*=','') | trim }}"
+
+- name: Decide audit result
+  set_fact:
+    audit_result: >-
+      {% set expected = ['*S-1-5-32-546','*S-1-5-113','*S-1-5-114'] %}
+      {% set current = deny_network.split(',') | map('trim') | list %}
+      {% if expected | difference(current) | length == 0 %}
+      PASSED
+      {% else %}
+      FAILED
+      {% endif %}
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Deny access to this computer from the network' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ deny_network | default('None') }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Deny access to this computer from the network' includes 'Guests, Local account, Administrators group',{{ impact }},{{ audit_result }},{{ deny_network | default('N/A') }},Guests,Local account,Administrators group"
+    create: yes
+
