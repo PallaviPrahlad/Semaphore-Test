@@ -38,6 +38,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Allow log on through Remote Desktop Services' is set to 'Administrators, Remote Desktop Users' (MS only),{{ impact }},{{ audit_result }},{{ allow_logon_rds | default('N/A') }},*S-1-5-32-544 *S-1-5-32-555"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Allow log on through Remote Desktop Services' is set to 'Administrators, Remote Desktop Users' (MS only),{{ impact }},{{ audit_result }},{{ allow_logon_rds | default('N/A') }},*S-1-5-32-544,*S-1-5-32-555"
     create: yes
 
