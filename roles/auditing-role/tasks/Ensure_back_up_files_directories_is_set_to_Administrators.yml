@@ -13,7 +13,7 @@
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set expected = ['*S-1-5-32-544'] %}   # SID for Administrators group
+      {% set expected = ['*S-1-5-32-544'] %}
       {% set current = backup_files_dirs.split(',') | map('trim') | list %}
       {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
       PASSED
@@ -39,6 +39,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Back up files and directories' is set to 'Administrators',{{ impact }},{{ audit_result }},{{ backup_files_dirs | default('N/A') }},Administrators"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Back up files and directories' is set to 'Administrators',{{ impact }},{{ audit_result }},{{ backup_files_dirs | default('N/A') }},*S-1-5-32-544"
     create: yes
 
