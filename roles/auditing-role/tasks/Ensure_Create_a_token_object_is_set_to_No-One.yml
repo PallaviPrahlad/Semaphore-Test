@@ -13,7 +13,7 @@
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% if create_token_object == "" %}
+      {% if create_token_object | trim == "" %}
       PASSED
       {% else %}
       FAILED
