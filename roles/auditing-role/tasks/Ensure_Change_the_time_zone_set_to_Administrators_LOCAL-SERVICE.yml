@@ -38,6 +38,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Change the time zone' is set to 'Administrators, LOCAL SERVICE',{{ impact }},{{ audit_result }},{{ change_time_zone | default('N/A') }},Administrators, LOCAL SERVICE"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Change the time zone' is set to 'Administrators, LOCAL SERVICE',{{ impact }},{{ audit_result }},{{ change_time_zone | default('N/A') }},*S-1-5-32-544,*S-1-5-19"
     create: yes
 
