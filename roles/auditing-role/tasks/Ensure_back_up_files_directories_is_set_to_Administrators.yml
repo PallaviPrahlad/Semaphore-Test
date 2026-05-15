@@ -34,6 +34,7 @@
     insertafter: BOF
   run_once: true
 
+
 - name: Write audit result to CSV
   local_action:
     module: lineinfile
