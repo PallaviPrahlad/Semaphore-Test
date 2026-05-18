@@ -24,4 +24,5 @@
 #- import_tasks: Ensure_Create_permanent_shared_objects_is_set_to_No-One.yml
 #- import_tasks: Ensure_Create_symbolic_links_is_set_to_Administrators_NT-VIRTUAL_MACHINE-Virtual_Machines.yml
 #- import_tasks: Ensure_Debug_programs_is_set_to_Administrators.yml
- - import_tasks: Ensure_Deny_access_to_computer_the_network_to_include_Guests_Local-account_member_of_Administrators_group.yml
+#- import_tasks: Ensure_Deny_access_to_computer_the_network_to_include_Guests_Local-account_member_of_Administrators_group.ym
+ - import_tasks: Ensure_Deny_log_on_as_batch_job_to_include_Guests.yml 
