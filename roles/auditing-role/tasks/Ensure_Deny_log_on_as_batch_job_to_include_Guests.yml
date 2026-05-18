@@ -6,15 +6,20 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Deny log on as a batch job'
+- name: Parse 'Deny log on as a service'
   set_fact:
-    deny_batch: "{{ (secpol_file.stdout | regex_search('SeDenyBatchLogonRight=.*')) | regex_replace('.*=','') | trim }}"
+    deny_service_raw: "{{ (secpol_file.stdout | regex_search('SeDenyServiceLogonRight=.*')) | default('SeDenyServiceLogonRight=') }}"
+
+- name: Extract value after '='
+  set_fact:
+    deny_service: "{{ deny_service_raw | regex_replace('.*=','') | trim }}"
 
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set expected = '*S-1-5-32-546' %}
-      {% if expected in deny_batch %}
+      {% set expected = ['*S-1-5-32-546'] %}   # Guests SID
+      {% set current = deny_service.split(',') | map('trim') | list if deny_service != '' else [] %}
+      {% if expected | difference(current) | length == 0 %}
       PASSED
       {% else %}
       FAILED
@@ -22,7 +27,7 @@
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Deny log on as a batch job' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ deny_batch | default('None') }})"
+    msg: "Audit result for 'Deny log on as a service' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ deny_service | default('None') }})"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -37,6 +42,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Deny log on as a batch job' includes 'Guests',{{ impact }},{{ audit_result }},{{ deny_batch | default('N/A') }},Guests"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Deny log on as a service' includes 'Guests',{{ impact }},{{ audit_result }},{{ deny_service | default('N/A') }},Guests"
     create: yes
 
