@@ -32,4 +32,5 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Deny log on locally' includes only 'Guests',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Guests"
+    create: yes 
