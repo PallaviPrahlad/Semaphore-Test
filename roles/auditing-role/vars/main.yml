@@ -1,6 +1,6 @@
-# Default variables for Print Spooler audit
+# Variables for Print Spooler audit role
 service_name: spooler
-name: "{{ service_name }}"
 impact: 1
 expected_value_print_spooler: stopped
 env: Production
+
