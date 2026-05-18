@@ -9,11 +9,12 @@
 - name: Parse 'Deny log on as a batch job'
   set_fact:
     deny_batch: "{{ (secpol_file.stdout | regex_search('SeDenyBatchLogonRight=.*')) | regex_replace('.*=','') | trim }}"
+    line: "{{ deny_batch }}"
 
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set expected = ['*S-1-5-32-546'] %}   # Guests SID
+      {% set expected = ['*S-1-5-32-546'] %}
       {% set current = deny_batch.split(',') | map('trim') | list if deny_batch != '' else [] %}
       {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
       PASSED
