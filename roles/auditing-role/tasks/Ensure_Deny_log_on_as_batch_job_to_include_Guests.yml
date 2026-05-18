@@ -8,13 +8,13 @@
 
 - name: Parse 'Deny log on as a batch job'
   set_fact:
-    deny_batch: "{{ (secpol_file.stdout | regex_search('SeDenyBatchLogonRight\\s*=.*')) | regex_replace('.*=','') | trim }}"
+    deny_batch: "{{ (secpol_file.stdout | regex_search('SeDenyBatchLogonRight=.*')) | regex_replace('.*=','') | trim }}"
 
 - name: Decide audit result
   set_fact:
     audit_result: >-
       {% set expected = '*S-1-5-32-546' %}
-      {% if deny_batch is search(expected) %}
+      {% if expected in deny_batch %}
       PASSED
       {% else %}
       FAILED
