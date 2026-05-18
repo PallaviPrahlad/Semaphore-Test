@@ -8,7 +8,7 @@
 
 - name: Parse 'Deny log on as a batch job'
   set_fact:
-    deny_batch_raw: "{{ (secpol_file.stdout | regex_search('SeDenyBatchLogonRight=.*')) | default('SeDenyBatchLogonRight=') }}"
+    deny_batch_raw: "{{ (secpol_file.stdout | regex_search('SeDenyBatchLogonRight\\s*=.*')) | default('SeDenyBatchLogonRight=') }}"
 
 - name: Extract accounts into current list
   set_fact:
