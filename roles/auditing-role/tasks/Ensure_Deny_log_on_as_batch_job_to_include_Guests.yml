@@ -17,8 +17,9 @@
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set expected = ['*S-1-5-32-546'] %}
-      {% if expected | difference(current) | length == 0 %}
+      {% set expected = ['*S-1-5-32-546'] %}   # Guests SID
+      {% set current = deny_batch_raw | regex_replace('.*=','') | trim | split(',') | map('trim') | list if deny_batch_raw != '' else [] %}
+      {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
       PASSED
       {% else %}
       FAILED
