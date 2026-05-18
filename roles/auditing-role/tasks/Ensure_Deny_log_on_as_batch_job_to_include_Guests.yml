@@ -1,4 +1,4 @@
----
+--
 - name: Export local security policy
   win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
 
@@ -14,7 +14,7 @@
   set_fact:
     audit_result: >-
       {% set expected = ['*S-1-5-32-546'] %}
-      {% set current = deny_batch.split(',') | map('trim') | list if deny_batch != '' else [] %}
+      {% set current = deny_batch.split(',') | map('trim') %}
       {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
       PASSED
       {% else %}
