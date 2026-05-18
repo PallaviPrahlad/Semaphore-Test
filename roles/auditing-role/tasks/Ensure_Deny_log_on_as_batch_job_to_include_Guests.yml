@@ -8,8 +8,7 @@
 
 - name: Parse 'Deny log on as a batch job'
   set_fact:
-    deny_batch: "{{ (secpol_file.stdout | regex_search('SeDenyBatchLogonRight=.*')) | regex_replace('.*=','') | trim }}"
-    line: "{{ deny_batch }}"
+    deny_batch: "{{ (secpol_file.stdout | regex_search('SeDenyBatchLogonRight=.*')) | trim }}"
 
 - name: Decide audit result
   set_fact:
