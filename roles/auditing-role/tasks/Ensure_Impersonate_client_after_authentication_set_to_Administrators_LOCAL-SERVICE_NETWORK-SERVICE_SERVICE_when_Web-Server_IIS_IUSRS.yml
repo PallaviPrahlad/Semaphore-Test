@@ -6,19 +6,22 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Generate security audits'
+- name: Parse 'Impersonate a client after authentication'
   set_fact:
-    generate_audits_raw: "{{ (secpol_file.stdout | regex_search('SeAuditPrivilege\\s*=.*')) | default('SeAuditPrivilege=') }}"
+    impersonate_raw: "{{ (secpol_file.stdout | regex_search('SeImpersonatePrivilege\\s*=.*')) | default('SeImpersonatePrivilege=') }}"
 
 - name: Extract accounts into current list
   set_fact:
-    current: "{{ generate_audits_raw | regex_replace('.*=','') | trim | split(',') | map('trim') | list }}"
+    current: "{{ impersonate_raw | regex_replace('.*=','') | trim | split(',') | map('trim') | list }}"
 
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set expected = ['*S-1-5-19','*S-1-5-20'] %}
-      {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
+      {% set expected_base = ['*S-1-5-19','*S-1-5-20','*S-1-32-544','*S-1-5-6'] %}   # Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE
+      {% set expected_iis = expected_base + ['IIS_IUSRS'] %}
+      {% if current | difference(expected_base) | length == 0 and expected_base | difference(current) | length == 0 %}
+      PASSED
+      {% elif current | difference(expected_iis) | length == 0 and expected_iis | difference(current) | length == 0 %}
       PASSED
       {% else %}
       FAILED
@@ -26,7 +29,7 @@
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Generate security audits' on {{ inventory_hostname }}: {{ audit_result }} (Current accounts: {{ current | default([]) }})"
+    msg: "Audit result for 'Impersonate a client after authentication' on {{ inventory_hostname }}: {{ audit_result }} (Current accounts: {{ current | default([]) }})"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -41,6 +44,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},LOCAL SERVICE,NETWORK SERVICE"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE' (and IIS_IUSRS if IIS installed),{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Administrators,LOCAL SERVICE,NETWORK SERVICE,SERVICE"
     create: yes
 
