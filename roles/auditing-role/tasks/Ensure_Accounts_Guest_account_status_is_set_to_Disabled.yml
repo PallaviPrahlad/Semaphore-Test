@@ -6,7 +6,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Accounts: Guest account status'
+- name: Parse 'Accounts Guest account status'
   set_fact:
     guest_account_raw: "{{ (secpol_file.stdout | regex_search('EnableGuestAccount\\s*=.*')) | default('EnableGuestAccount=') }}"
 
