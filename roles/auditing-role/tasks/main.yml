@@ -45,4 +45,5 @@
 #- import_tasks: Ensure_Replace_a_process_level_token_is_set_to_LOCAL-SERVICE_NETWORK-SERVICE.yml
 #- import_tasks: Ensure_Restore_files_and_directories_is_set_to_Administrators.yml
 #- import_tasks: Ensure_Shut_down_the_system_is_set_to_Administrators.yml
- - import_tasks: Ensure_Take_ownership_of_files_or_other_objects_is_set_to_Administrators.yml
+#- import_tasks: Ensure_Take_ownership_of_files_or_other_objects_is_set_to_Administrators.yml
+ - import_tasks: Ensure_Accounts_Guest_account_status_is_set_to_Disabled.yml
