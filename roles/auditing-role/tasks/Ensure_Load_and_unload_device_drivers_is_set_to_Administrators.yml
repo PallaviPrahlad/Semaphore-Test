@@ -40,7 +40,7 @@
 - name: Write audit result to CSV
   local_action:
     module: lineinfile
-    path: /tmp/load_drivers_audit.csv
+    path: /tmp/test.csv
     line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Load and unload device drivers' is set to 'Administrators',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Administrators"
     create: yes
 
