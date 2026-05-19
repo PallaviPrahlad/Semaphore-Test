@@ -17,7 +17,7 @@
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set expected = ['*S-1-5-19','*S-1-5-20'LOCAL SERVICE'] %}
+      {% set expected = ['*S-1-5-19','*S-1-5-20'] %}
       {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
       PASSED
       {% else %}
@@ -40,7 +40,7 @@
 - name: Write audit result to CSV
   local_action:
     module: lineinfile
-    path: /tmp/replace_token_audit.csv
+    path: /tmp/test.csv
     line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Replace a process level token' is set to 'LOCAL SERVICE, NETWORK SERVICE',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},LOCAL SERVICE;NETWORK SERVICE"
     create: yes
 
