@@ -46,4 +46,5 @@
 #- import_tasks: Ensure_Restore_files_and_directories_is_set_to_Administrators.yml
 #- import_tasks: Ensure_Shut_down_the_system_is_set_to_Administrators.yml
 #- import_tasks: Ensure_Take_ownership_of_files_or_other_objects_is_set_to_Administrators.yml
- - import_tasks: Ensure_Accounts_Guest_account_status_is_set_to_Disabled.yml
+#- import_tasks: Ensure_Accounts_Guest_account_status_is_set_to_Disabled.yml
+ - import_tasks: Ensure_Accounts_Limit_local_account_use_of_blank_passwords_to_console_logon_only_is_set_to_Enabled.yml
