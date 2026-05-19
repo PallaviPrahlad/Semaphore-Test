@@ -40,4 +40,5 @@
 #- import_tasks: Ensure_Modify_an_object_label_is_set_to_No-One.yml
 #- import_tasks: Ensure_Modify_firmware_environment_values_is_set_to_Administrators.yml
 #- import_tasks: Ensure_Perform_volume_maintenance_tasks_is_set_to_Administrators.yml
- - import_tasks: Ensure_Profile_single_process_is_set_to_Administrators.yml
+#- import_tasks: Ensure_Profile_single_process_is_set_to_Administrators.yml
+ - import_tasks: Ensure_Profile_system_performance_is_set_to_Administrators_NT-SERVICE_WdiServiceHost.yml
