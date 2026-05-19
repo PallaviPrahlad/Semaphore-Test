@@ -1,0 +1,45 @@
+---
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Modify an object label'
+  set_fact:
+    modify_label_raw: "{{ (secpol_file.stdout | regex_search('SeRelabelPrivilege\\s*=.*')) | default('SeRelabelPrivilege=') }}"
+
+- name: Extract accounts into current list
+  set_fact:
+    current: "{{ modify_label_raw | regex_replace('.*=','') | trim | split(',') | map('trim') | list }}"
+
+- name: Decide audit result
+  set_fact:
+    audit_result: >-
+      {% if current | length == 0 %}
+      PASSED
+      {% else %}
+      FAILED
+      {% endif %}
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Modify an object label' on {{ inventory_hostname }}: {{ audit_result }} (Current accounts: {{ current | default([]) }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/modify_label_audit.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Modify an object label' is set to 'No One',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},No One"
+    create: yes
+
