@@ -40,6 +40,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Configure 'Accounts: Rename guest account',{{ impact }},{{ audit_result }},{{ current | default('N/A') }},Renamed from 'Guest'"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Configure 'Accounts: Rename guest account',{{ impact }},{{ audit_result }},{{ current | default('N/A') }},DisableGuest'"
     create: yes
 
