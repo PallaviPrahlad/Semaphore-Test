@@ -6,7 +6,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Accounts: Rename administrator account'
+- name: Parse 'Accounts Rename administrator account'
   set_fact:
     rename_admin_raw: "{{ (secpol_file.stdout | regex_search('NewAdministratorName\\s*=.*')) | default('NewAdministratorName=') }}"
 
