@@ -6,7 +6,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Audit: Shut down system immediately if unable to log security audits'
+- name: Parse 'Audit Shut down system immediately if unable to log security audits'
   set_fact:
     crash_on_audit_fail_raw: "{{ (secpol_file.stdout | regex_search('CrashOnAuditFail\\s*=.*')) | default('CrashOnAuditFail=') }}"
 
