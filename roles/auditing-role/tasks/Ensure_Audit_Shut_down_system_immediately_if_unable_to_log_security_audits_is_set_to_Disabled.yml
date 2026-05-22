@@ -10,14 +10,14 @@
   set_fact:
     crash_on_audit_fail_raw: "{{ (secpol_file.stdout | regex_search('CrashOnAuditFail\\s*=.*')) | default('CrashOnAuditFail=') }}"
 
-- name: Extract current value
+- name: Extract current values into list
   set_fact:
-    current: "{{ crash_on_audit_fail_raw | regex_replace('.*=','') | trim }}"
+    current: "{{ crash_on_audit_fail_raw | regex_replace('.*=','') | trim | split(',') | map('trim') | list }}"
 
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% if current == '0' %}
+      {% if '0' in current %}
       PASSED
       {% else %}
       FAILED
@@ -25,7 +25,7 @@
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Audit: Shut down system immediately if unable to log security audits' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ current | default('N/A') }})"
+    msg: "Audit result for 'Audit: Shut down system immediately if unable to log security audits' on {{ inventory_hostname }}: {{ audit_result }} (Current values: {{ current | default([]) }})"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -40,6 +40,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Audit: Shut down system immediately if unable to log security audits' is set to 'Disabled',{{ impact }},{{ audit_result }},{{ current | default('N/A') }},Disabled"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Audit: Shut down system immediately if unable to log security audits' is set to 'Disabled',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Disabled"
     create: yes
 
