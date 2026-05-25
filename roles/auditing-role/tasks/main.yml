@@ -59,4 +59,5 @@
 #- import_tasks: Ensure_Domain_member_Disable_machine_account_password_changes_is_set_to_Disabled.yml
 #- import_tasks: Ensure_Domain_member_Maximum_machine_account_password_age_is_set_to_30_or_fewer_days_but_not_0.yml
 #- import_tasks: Ensure_Domain_member_Require_strong_Windows_2000_or_later_session_key_is_set_to_Enabled.yml
- - import_tasks: Ensure_Interactive_logon_Do_not_require_CTRL+ALT+DEL_is_set_to_Disabled.yml  
+#- import_tasks: Ensure_Interactive_logon_Do_not_require_CTRL+ALT+DEL_is_set_to_Disabled.yml
+ - import_tasks: Ensure_Interactive_logon_Dont_display_last_signed-in_is_set_to_Enabled.yml
