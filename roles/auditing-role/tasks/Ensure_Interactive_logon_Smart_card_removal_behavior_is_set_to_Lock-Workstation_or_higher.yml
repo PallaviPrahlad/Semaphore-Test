@@ -10,21 +10,20 @@
   set_fact:
     smartcard_removal_raw: "{{ (secpol_file.stdout | regex_search('ScRemoveOption\\s*=.*')) | default('ScRemoveOption=') }}"
 
-- name: Extract current value
+- name: Extract current value (cast to int)
   set_fact:
-    current: "{{ smartcard_removal_raw | regex_replace('.*=','') | trim }}"
+    current: "{{ smartcard_removal_raw | regex_replace('.*=','') | trim | int }}"
 
 # Values for ScRemoveOption:
-# 0 = No Action
-# 1 = Lock Workstation
-# 2 = Force Logoff
-# 3 = Disconnect if Remote Terminal Services Session
+# 0 = No Action (non-compliant)
+# 1 = Lock Workstation (compliant)
+# 2 = Force Logoff (compliant)
+# 3 = Disconnect if Remote Terminal Services Session (compliant)
 
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set option = current | int %}
-      {% if option >= 1 %}
+      {% if current >= 1 %}
       PASSED
       {% else %}
       FAILED
@@ -43,10 +42,10 @@
     insertafter: BOF
   run_once: true
 
-- name: Write audit result to CSV
+- name: Write audit result to CSV (no quotes around int)
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Interactive logon: Smart card removal behavior' is set to 'Lock Workstation' or higher,{{ impact }},{{ audit_result }},{{ current | default('N/A') }},Lock Workstation or higher"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Interactive logon: Smart card removal behavior' is set to 'Lock Workstation' or higher,{{ impact }},{{ audit_result }},{{ current }},Lock Workstation or higher"
     create: yes
 
