@@ -62,4 +62,5 @@
 #- import_tasks: Ensure_Interactive_logon_Do_not_require_CTRL+ALT+DEL_is_set_to_Disabled.yml
 #- import_tasks: Ensure_Interactive_logon_Dont_display_last_signed-in_is_set_to_Enabled.yml
 #- import_tasks: Ensure_Interactive_logon_Machine_inactivity_limit_is_set_to_1800_or_fewer_seconds_but_not_0.yml
- - import_tasks: Configure_Interactive_logon_Message_text_for_users_attempting_to_log_on.yml
+#- import_tasks: Configure_Interactive_logon_Message_text_for_users_attempting_to_log_on.yml
+ - import_tasks: Configure_Interactive_logon_Message_title_for_users_attempting_to_log_on.yml  
