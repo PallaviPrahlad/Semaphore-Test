@@ -6,7 +6,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Interactive logon: Do not require CTRL+ALT+DEL'
+- name: Parse 'Interactive logon Do not require CTRL+ALT+DEL'
   set_fact:
     dont_require_ctrl_alt_del_raw: "{{ (secpol_file.stdout | regex_search('DisableCAD\\s*=.*')) | default('DisableCAD=') }}"
 
