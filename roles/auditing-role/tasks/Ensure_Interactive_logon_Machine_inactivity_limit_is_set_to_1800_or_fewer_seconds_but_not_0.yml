@@ -1,0 +1,48 @@
+---
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Interactive logon: Machine inactivity limit'
+  set_fact:
+    inactivity_limit_raw: "{{ (secpol_file.stdout | regex_search('InactivityTimeoutSecs\\s*=.*')) | default('InactivityTimeoutSecs=') }}"
+
+- name: Extract current value
+  set_fact:
+    current: "{{ inactivity_limit_raw | regex_replace('.*=','') | trim }}"
+
+- name: Decide audit result
+  set_fact:
+    audit_result: >-
+      {% set limit = current | int %}
+      {% if limit == 0 %}
+      FAILED
+      {% elif limit > 1800 %}
+      FAILED
+      {% else %}
+      PASSED
+      {% endif %}
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Interactive logon: Machine inactivity limit' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ current | default('N/A') }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Interactive logon: Machine inactivity limit' is set to '900 or fewer second(s), but not 0',{{ impact }},{{ audit_result }},{{ current | default('N/A') }},900 or fewer seconds (not 0)"
+    create: yes
+
