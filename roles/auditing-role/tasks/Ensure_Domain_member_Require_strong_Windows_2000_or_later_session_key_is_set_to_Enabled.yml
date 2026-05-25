@@ -1,0 +1,45 @@
+---
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Domain member Require strong (Windows 2000 or later) session key'
+  set_fact:
+    strong_key_raw: "{{ (secpol_file.stdout | regex_search('RequireStrongKey\\s*=.*')) | default('RequireStrongKey=') }}"
+
+- name: Extract current values into list
+  set_fact:
+    current: "{{ strong_key_raw | regex_replace('.*=','') | trim | split(',') | map('trim') | list }}"
+
+- name: Decide audit result
+  set_fact:
+    audit_result: >-
+      {% if '1' in current %}
+      PASSED
+      {% else %}
+      FAILED
+      {% endif %}
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Domain member: Require strong (Windows 2000 or later) session key' on {{ inventory_hostname }}: {{ audit_result }} (Current values: {{ current | default([]) }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Domain member: Require strong (Windows 2000 or later) session key' is set to 'Enabled',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Enabled"
+    create: yes
+
