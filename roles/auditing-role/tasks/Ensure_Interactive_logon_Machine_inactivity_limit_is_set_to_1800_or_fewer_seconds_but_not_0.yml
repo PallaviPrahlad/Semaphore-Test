@@ -6,7 +6,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Interactive logon Machine inactivity limit'
+- name: Parse 'Interactive logon: Machine inactivity limit'
   set_fact:
     inactivity_limit_raw: "{{ (secpol_file.stdout | regex_search('InactivityTimeoutSecs\\s*=.*')) | default('InactivityTimeoutSecs=') }}"
 
@@ -18,12 +18,10 @@
   set_fact:
     audit_result: >-
       {% set limit = current | int %}
-      {% if limit == 0 %}
-      FAILED
-      {% elif limit > 1800 %}
-      FAILED
-      {% else %}
+      {% if limit > 0 and limit <= 1800 %}
       PASSED
+      {% else %}
+      FAILED
       {% endif %}
 
 - name: Display audit result
