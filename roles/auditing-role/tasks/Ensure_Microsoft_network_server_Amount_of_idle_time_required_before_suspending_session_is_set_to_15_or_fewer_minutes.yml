@@ -6,7 +6,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Microsoft network server: Amount of idle time required before suspending session'
+- name: Parse 'Microsoft network server Amount of idle time required before suspending session'
   set_fact:
     idle_time_raw: "{{ (secpol_file.stdout | regex_search('AutoDisconnect\\s*=.*')) | default('AutoDisconnect=') }}"
 
