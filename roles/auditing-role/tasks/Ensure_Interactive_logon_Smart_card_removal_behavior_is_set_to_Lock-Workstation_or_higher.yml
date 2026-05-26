@@ -6,7 +6,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Interactive logon Smart card removal behavior'
+- name: Parse 'Interactive logon: Smart card removal behavior'
   set_fact:
     smartcard_removal_raw: "{{ (secpol_file.stdout | regex_search('ScRemoveOption\\s*=.*')) | default('ScRemoveOption=') }}"
 
@@ -31,7 +31,7 @@
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Interactive logon: Smart card removal behavior' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ current | default('N/A') }})"
+    msg: "Audit result for 'Interactive logon: Smart card removal behavior' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ current | int }})"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -42,7 +42,7 @@
     insertafter: BOF
   run_once: true
 
-- name: Write audit result to CSV (no quotes around int)
+- name: Write audit result to CSV (force int, no quotes)
   local_action:
     module: lineinfile
     path: /tmp/test.csv
