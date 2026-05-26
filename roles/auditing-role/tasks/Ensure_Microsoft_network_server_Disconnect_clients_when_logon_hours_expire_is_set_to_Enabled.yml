@@ -10,9 +10,9 @@
   set_fact:
     disconnect_clients_raw: "{{ (secpol_file.stdout | regex_search('EnableForcedLogoff\\s*=.*')) | default('EnableForcedLogoff=') }}"
 
-- name: Extract current values into list
+- name: Extract current value (cast to int)
   set_fact:
-    current: "{{ disconnect_clients_raw | regex_replace('.*=','') | trim | split(',') | map('trim') | list }}"
+    current: "{{ disconnect_clients_raw | regex_replace('.*=','') | trim | int }}"
 
 # Values for EnableForcedLogoff:
 # 0 = Disabled (non-compliant)
@@ -20,16 +20,11 @@
 
 - name: Decide audit result
   set_fact:
-    audit_result: >-
-      {% if '1' in current %}
-      PASSED
-      {% else %}
-      FAILED
-      {% endif %}
+    audit_result: "{{ 'PASSED' if current == 1 else 'FAILED' }}"
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Microsoft network server: Disconnect clients when logon hours expire' on {{ inventory_hostname }}: {{ audit_result }} (Current values: {{ current | default([]) }})"
+    msg: "Audit result for 'Microsoft network server: Disconnect clients when logon hours expire' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ current }})"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -40,10 +35,10 @@
     insertafter: BOF
   run_once: true
 
-- name: Write audit result to CSV
+- name: Write audit result to CSV (numeric output, no quotes)
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Microsoft network server: Disconnect clients when logon hours expire' is set to 'Enabled',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Enabled"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Microsoft network server: Disconnect clients when logon hours expire' is set to 'Enabled',{{ impact }},{{ audit_result }},{{ current }},Enabled"
     create: yes
 
