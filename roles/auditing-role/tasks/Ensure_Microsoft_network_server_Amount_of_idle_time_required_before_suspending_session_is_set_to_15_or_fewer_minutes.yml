@@ -18,12 +18,7 @@
 
 - name: Decide audit result
   set_fact:
-    audit_result: >-
-      {% if current <= 15 %}
-      PASSED
-      {% else %}
-      FAILED
-      {% endif %}
+    audit_result: "{{ 'PASSED' if (current | int) <= 15 else 'FAILED' }}"
 
 - name: Display audit result
   debug:
