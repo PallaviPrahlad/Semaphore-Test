@@ -6,7 +6,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Interactive logon: Smart card removal behavior'
+- name: Parse 'Interactive logon Smart card removal behavior'
   set_fact:
     smartcard_removal_raw: "{{ (secpol_file.stdout | regex_search('ScRemoveOption\\s*=.*')) | default('ScRemoveOption=') }}"
 
