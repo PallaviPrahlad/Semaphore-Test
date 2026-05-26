@@ -12,20 +12,20 @@
 
 - name: Extract current value (take last number if multiple)
   set_fact:
-    current: "{{ (spn_validation_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
+    current: "{{ (spn_validation_raw | regex_replace('.*=','') | trim | split(',') | last) }}"
 
 # Values for SMBServerNameHardeningLevel:
 # 0 = None (non-compliant)
 # 1 = Accept if provided by client (compliant)
 # 2 = Required from client (compliant, higher)
 
-- name: Decide audit result
+- name: Decide audit result (cast inside comparison)
   set_fact:
-    audit_result: "{{ 'PASSED' if current >= 1 else 'FAILED' }}"
+    audit_result: "{{ 'PASSED' if (current | int) >= 1 else 'FAILED' }}"
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Microsoft network server: Server SPN target name validation level' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ current }})"
+    msg: "Audit result for 'Microsoft network server: Server SPN target name validation level' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ current | int }})"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -40,6 +40,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Microsoft network server: Server SPN target name validation level' is set to 'Accept if provided by client' or higher,{{ impact }},{{ audit_result }},{{ current }},Accept if provided by client or higher"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Microsoft network server: Server SPN target name validation level' is set to 'Accept if provided by client' or higher,{{ impact }},{{ audit_result }},{{ current | int }},Accept if provided by client or higher"
     create: yes
 
