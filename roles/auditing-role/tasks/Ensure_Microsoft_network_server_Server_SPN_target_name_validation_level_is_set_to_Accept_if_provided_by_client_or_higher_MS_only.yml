@@ -1,0 +1,45 @@
+---
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Microsoft network server Server SPN target name validation level'
+  set_fact:
+    spn_validation_raw: "{{ (secpol_file.stdout | regex_search('SMBServerNameHardeningLevel\\s*=.*')) | default('SMBServerNameHardeningLevel=') }}"
+
+- name: Extract current value (take last number if multiple)
+  set_fact:
+    current: "{{ (spn_validation_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
+
+# Values for SMBServerNameHardeningLevel:
+# 0 = None (non-compliant)
+# 1 = Accept if provided by client (compliant)
+# 2 = Required from client (compliant, higher)
+
+- name: Decide audit result
+  set_fact:
+    audit_result: "{{ 'PASSED' if current >= 1 else 'FAILED' }}"
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Microsoft network server: Server SPN target name validation level' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ current }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV (numeric output, no quotes)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Microsoft network server: Server SPN target name validation level' is set to 'Accept if provided by client' or higher,{{ impact }},{{ audit_result }},{{ current }},Accept if provided by client or higher"
+    create: yes
+
