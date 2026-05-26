@@ -8,13 +8,13 @@
 
 - name: Parse 'Microsoft network server Disconnect clients when logon hours expire'
   set_fact:
-    disconnect_clients_raw: "{{ (secpol_file.stdout | regex_search('EnableForcedLogoff\\s*=.*')) | default('EnableForcedLogoff=') }}"
+    disconnect_clients_raw: "{{ (secpol_file.stdout | regex_search('EnableForcedLogOff\\s*=.*')) | default('EnableForcedLogOff=') }}"
 
-- name: Extract current value (cast to int)
+- name: Extract current value (take last number if multiple)
   set_fact:
-    current: "{{ disconnect_clients_raw | regex_replace('.*=','') | trim | int }}"
+    current: "{{ (disconnect_clients_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
 
-# Values for EnableForcedLogoff:
+# Values for EnableForcedLogOff:
 # 0 = Disabled (non-compliant)
 # 1 = Enabled (compliant)
 
