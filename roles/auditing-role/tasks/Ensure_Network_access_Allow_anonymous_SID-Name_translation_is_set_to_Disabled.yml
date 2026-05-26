@@ -1,0 +1,44 @@
+---
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Network access Allow anonymous SID/Name translation'
+  set_fact:
+    anon_sid_raw: "{{ (secpol_file.stdout | regex_search('LSAAnonymousNameLookup\\s*=.*')) | default('LSAAnonymousNameLookup=') }}"
+
+- name: Extract current value (take last number if multiple)
+  set_fact:
+    current: "{{ (anon_sid_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
+
+# Values for LSAAnonymousNameLookup:
+# 0 = Disabled (compliant)
+# 1 = Enabled (non-compliant)
+
+- name: Decide audit result
+  set_fact:
+    audit_result: "{{ 'PASSED' if current == 0 else 'FAILED' }}"
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Network access: Allow anonymous SID/Name translation' on {{ inventory_hostname }}: {{ audit_result }} (Current value: {{ current }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV (numeric output, no quotes)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Network access: Allow anonymous SID/Name translation' is set to 'Disabled',{{ impact }},{{ audit_result }},{{ current }},Disabled"
+    create: yes
+
