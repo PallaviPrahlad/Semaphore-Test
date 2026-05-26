@@ -6,7 +6,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Microsoft network server: Server SPN target name validation level'
+- name: Parse 'Microsoft network server Server SPN target name validation level'
   set_fact:
     spn_validation_raw: "{{ (secpol_file.stdout | regex_search('SmbServerNameHardeningLevel\\s*=.*')) | default('SmbServerNameHardeningLevel=') }}"
 
