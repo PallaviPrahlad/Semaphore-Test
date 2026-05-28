@@ -31,7 +31,7 @@
 - name: Add header row to CSV (only once)
   local_action:
     module: lineinfile
-    path: /tmp/audit_results.csv
+    path: /tmp/test.csv
     line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
     create: yes
     insertafter: BOF
@@ -40,6 +40,6 @@
 - name: Write audit result to CSV (numeric output, no quotes)
   local_action:
     module: lineinfile
-    path: /tmp/audit_results.csv
+    path: /tmp/test.csv
     line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts' is set to 'Enabled',{{ impact | default('High') }},{{ audit_result_sam_enum }},{{ current_sam_enum }},Enabled"
     create: yes
