@@ -7,7 +7,7 @@
 
 - name: Parse 'Network access: Do not allow anonymous enumeration of SAM accounts'
   set_fact:
-    sam_enum_raw: "{{ (secpol_file.stdout | regex_search('LSAAnonymousNameLookup\\s*=.*')) | default('LSAAnonymousNameLookup=') }}"
+    sam_enum_raw: "{{ (secpol_file.stdout | regex_search('RestrictAnonymousSAM\\s*=.*')) | default('LSAAnonymousNameLookup=') }}"
 
 - name: Extract current value
   set_fact:
