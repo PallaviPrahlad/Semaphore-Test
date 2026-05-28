@@ -8,30 +8,30 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Network access Do not allow anonymous enumeration of SAM accounts'
+- name: Parse 'Network access: Do not allow anonymous enumeration of SAM accounts and shares'
   set_fact:
-    sam_enum_raw: "{{ (secpol_file.stdout | regex_search('RestrictAnonymousSAM\\s*=.*')) | default('RestrictAnonymousSAM=0') }}"
+    sam_shares_raw: "{{ (secpol_file.stdout | regex_search('RestrictAnonymous\\s*=.*')) | default('RestrictAnonymous=0') }}"
 
 - name: Extract current value
   set_fact:
-    current_sam_enum: "{{ (sam_enum_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
+    current_sam_shares: "{{ (sam_shares_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
 
-# Values for RestrictAnonymousSAM:
+# Values for RestrictAnonymous:
 # 0 = Disabled (non-compliant)
 # 1 = Enabled (compliant)
 
 - name: Decide audit result
   set_fact:
-    audit_result_sam_enum: "{{ 'PASSED' if (current_sam_enum | int) == 1 else 'FAILED' }}"
+    audit_result_sam_shares: "{{ 'PASSED' if (current_sam_shares | int) == 1 else 'FAILED' }}"
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Network access: Do not allow anonymous enumeration of SAM accounts' on {{ inventory_hostname }}: {{ audit_result_sam_enum }} (Current value: {{ current_sam_enum }})"
+    msg: "Audit result for 'Network access: Do not allow anonymous enumeration of SAM accounts and shares' on {{ inventory_hostname }}: {{ audit_result_sam_shares }} (Current value: {{ current_sam_shares }})"
 
 - name: Add header row to CSV (only once)
   local_action:
     module: lineinfile
-    path: /tmp/test.csv
+    path: /tmp/audit_results.csv
     line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
     create: yes
     insertafter: BOF
@@ -40,6 +40,6 @@
 - name: Write audit result to CSV (numeric output, no quotes)
   local_action:
     module: lineinfile
-    path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts' is set to 'Enabled',{{ impact | default('High') }},{{ audit_result_sam_enum }},{{ current_sam_enum }},Enabled"
+    path: /tmp/audit_results.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts and shares' is set to 'Enabled (MS only)',{{ impact | default('High') }},{{ audit_result_sam_shares }},{{ current_sam_shares }},Enabled"
     create: yes
