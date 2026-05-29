@@ -8,7 +8,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Network access Remotely accessible registry paths'
+- name: Parse 'Network access: Remotely accessible registry paths'
   set_fact:
     reg_paths_raw: "{{ (secpol_file.stdout | regex_search('NullSessionRegistry\\s*=.*')) | default('NullSessionRegistry=') }}"
 
@@ -16,17 +16,29 @@
   set_fact:
     current_reg_paths: "{{ (reg_paths_raw | regex_replace('.*=','') | trim) }}"
 
-# Values for NullSessionRegistry:
-# Empty string = Compliant (no registry paths accessible anonymously)
-# Non-empty string = Non-compliant (one or more registry paths accessible anonymously)
+# Expected values for NullSessionRegistry:
+# System\CurrentControlSet\Control\ProductOptions
+# System\CurrentControlSet\Control\Server Applications
+# Software\Microsoft\Windows NT\CurrentVersion
+
+- name: Define expected registry paths
+  set_fact:
+    expected_reg_paths:
+      - "System\\CurrentControlSet\\Control\\ProductOptions"
+      - "System\\CurrentControlSet\\Control\\Server Applications"
+      - "Software\\Microsoft\\Windows NT\\CurrentVersion"
+
+- name: Split current registry paths into list
+  set_fact:
+    current_reg_paths_list: "{{ current_reg_paths.split(',') if current_reg_paths|length > 0 else [] }}"
 
 - name: Decide audit result
   set_fact:
-    audit_result_reg_paths: "{{ 'PASSED' if (current_reg_paths | length) == 0 else 'FAILED' }}"
+    audit_result_reg_paths: "{{ 'PASSED' if expected_reg_paths | difference(current_reg_paths_list | map('trim') | list) | length == 0 else 'FAILED' }}"
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Network access Remotely accessible registry paths' on {{ inventory_hostname }}: {{ audit_result_reg_paths }} (Current value: {{ current_reg_paths | default('None') }})"
+    msg: "Audit result for 'Network access: Remotely accessible registry paths' on {{ inventory_hostname }}: {{ audit_result_reg_paths }} (Current value: {{ current_reg_paths | default('None') }})"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -41,5 +53,5 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Remotely accessible registry paths' is configured,{{ impact | default('High') }},{{ audit_result_reg_paths }},{{ current_reg_paths | default('None') }},None"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Remotely accessible registry paths' is configured,{{ impact | default('High') }},{{ audit_result_reg_paths }},{{ current_reg_paths | default('None') }},{{ expected_reg_paths | join(';') }}"
     create: yes
