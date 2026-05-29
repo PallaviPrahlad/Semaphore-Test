@@ -34,7 +34,10 @@
 
 - name: Decide audit result
   set_fact:
-    audit_result_reg_subpaths "{{ 'PASSED' if expected_reg_subpaths | difference(current_reg_subpaths_list | map('trim') | list) | length == 0 else 'FAILED' }}"
+    audit_result_reg_subpaths: >-
+      {{ 'PASSED'
+         if (expected_reg_subpaths | difference(current_reg_subpaths_list | map('trim') | list) | length) == 0
+         else 'FAILED' }}
 
 - name: Display audit result
   debug:
