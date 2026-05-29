@@ -1,0 +1,46 @@
+---
+# roles/audit/tasks/main.yml
+
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Network access Let Everyone permissions apply to anonymous users'
+  set_fact:
+    everyone_anonymous_raw: "{{ (secpol_file.stdout | regex_search('EveryoneIncludesAnonymous\\s*=.*')) | default('EveryoneIncludesAnonymous=1') }}"
+
+- name: Extract current value
+  set_fact:
+    current_everyone_anonymous: "{{ (everyone_anonymous_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
+
+# Values for EveryoneIncludesAnonymous:
+# 0 = Disabled (compliant)
+# 1 = Enabled (non-compliant)
+
+- name: Decide audit result
+  set_fact:
+    audit_result_everyone_anonymous: "{{ 'PASSED' if (current_everyone_anonymous | int) == 0 else 'FAILED' }}"
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Network access: Let Everyone permissions apply to anonymous users' on {{ inventory_hostname }}: {{ audit_result_everyone_anonymous }} (Current value: {{ current_everyone_anonymous }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV (numeric output, no quotes)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Let Everyone permissions apply to anonymous users' is set to 'Disabled',{{ impact | default('High') }},{{ audit_result_everyone_anonymous }},{{ current_everyone_anonymous }},Disabled"
+    create: yes
+
