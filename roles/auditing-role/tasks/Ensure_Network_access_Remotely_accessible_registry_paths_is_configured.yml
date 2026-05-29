@@ -1,0 +1,45 @@
+---
+# roles/audit/tasks/main.yml
+
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Network access Remotely accessible registry paths'
+  set_fact:
+    reg_paths_raw: "{{ (secpol_file.stdout | regex_search('NullSessionRegistry\\s*=.*')) | default('NullSessionRegistry=') }}"
+
+- name: Extract current value
+  set_fact:
+    current_reg_paths: "{{ (reg_paths_raw | regex_replace('.*=','') | trim) }}"
+
+# Values for NullSessionRegistry:
+# Empty string = Compliant (no registry paths accessible anonymously)
+# Non-empty string = Non-compliant (one or more registry paths accessible anonymously)
+
+- name: Decide audit result
+  set_fact:
+    audit_result_reg_paths: "{{ 'PASSED' if (current_reg_paths | length) == 0 else 'FAILED' }}"
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Network access Remotely accessible registry paths' on {{ inventory_hostname }}: {{ audit_result_reg_paths }} (Current value: {{ current_reg_paths | default('None') }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Remotely accessible registry paths' is configured,{{ impact | default('High') }},{{ audit_result_reg_paths }},{{ current_reg_paths | default('None') }},None"
+    create: yes
