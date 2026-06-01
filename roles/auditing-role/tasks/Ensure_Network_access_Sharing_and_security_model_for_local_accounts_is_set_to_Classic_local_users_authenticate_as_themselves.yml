@@ -8,17 +8,13 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Network access Sharing and security model for local accounts'
+- name: Parse 'Network access: Sharing and security model for local accounts'
   set_fact:
     local_accounts_raw: "{{ (secpol_file.stdout | regex_search('ForceGuest\\s*=.*')) | default('ForceGuest=1') }}"
 
-- name: Extract current values list
+- name: Extract current value
   set_fact:
-    current_local_accounts_list: "{{ (local_accounts_raw | regex_replace('.*=','') | trim | split(',') | map('trim')) }}"
-
-- name: Normalize current value (take last numeric entry)
-  set_fact:
-    current_local_accounts: "{{ (current_local_accounts_list | last | int) }}"
+    current_local_accounts: "{{ (local_accounts_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
 
 # Values for ForceGuest:
 # 0 = Classic - local users authenticate as themselves (compliant)
@@ -26,11 +22,11 @@
 
 - name: Decide audit result
   set_fact:
-    audit_result_local_accounts: "{{ 'PASSED' if current_local_accounts == 0 else 'FAILED' }}"
+    audit_result_local_accounts: "{{ 'COMPLIANT' if (current_local_accounts | int) == 0 else 'NON-COMPLIANT' }}"
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Network access: Sharing and security model for local accounts' on {{ inventory_hostname }}: {{ audit_result_local_accounts }} (Raw value: {{ current_local_accounts_list }}, Effective value: {{ current_local_accounts }})"
+    msg: "Audit result for 'Network access: Sharing and security model for local accounts' on {{ inventory_hostname }}: {{ audit_result_local_accounts }} (Current value: {{ current_local_accounts }})"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -41,7 +37,7 @@
     insertafter: BOF
   run_once: true
 
-- name: Write audit result to CSV
+- name: Write audit result to CSV (numeric output, no quotes)
   local_action:
     module: lineinfile
     path: /tmp/test.csv
