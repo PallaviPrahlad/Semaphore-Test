@@ -16,12 +16,12 @@
   set_fact:
     current_anon_shares_list: "{{ (anon_shares_raw | regex_replace('.*=','') | trim | split(',') | map('trim')) }}"
 
-- name: Normalize current value
+- name: Normalize current value (remove blanks and numeric placeholders)
   set_fact:
-    current_anon_shares: "{{ current_anon_shares_list | reject('equalto','') | list }}"
+    current_anon_shares: "{{ current_anon_shares_list | reject('equalto','') | reject('match','^\\d+$') | list }}"
 
-# Expected value:
-# None → compliant if list is empty OR only contains blanks
+# Compliance rule:
+# PASSED if no actual share names remain (empty list after filtering)
 
 - name: Decide audit result
   set_fact:
