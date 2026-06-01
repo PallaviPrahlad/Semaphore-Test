@@ -1,0 +1,45 @@
+---
+# roles/audit/tasks/main.yml
+
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Network security: Allow LocalSystem NULL session fallback'
+  set_fact:
+    null_session_raw: "{{ (secpol_file.stdout | regex_search('AllowNullSessionFallback\\s*=.*')) | default('AllowNullSessionFallback=1') }}"
+
+- name: Extract current value
+  set_fact:
+    current_null_session: "{{ (null_session_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
+
+# Values for AllowNullSessionFallback:
+# 0 = Disabled (compliant)
+# 1 = Enabled (non-compliant)
+
+- name: Decide audit result
+  set_fact:
+    audit_result_null_session: "{{ 'PASSED' if (current_null_session | int) == 0 else 'FAILED' }}"
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Network security: Allow LocalSystem NULL session fallback' on {{ inventory_hostname }}: {{ audit_result_null_session }} (Current value: {{ current_null_session }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV (numeric output, no quotes)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network security: Allow LocalSystem NULL session fallback' is set to 'Disabled',{{ impact | default('High') }},{{ audit_result_null_session }},{{ current_null_session }},Disabled"
+    create: yes
