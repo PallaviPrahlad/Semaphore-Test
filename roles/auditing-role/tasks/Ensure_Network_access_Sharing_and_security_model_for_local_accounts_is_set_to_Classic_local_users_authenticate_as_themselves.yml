@@ -8,7 +8,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Network access: Sharing and security model for local accounts'
+- name: Parse 'Network access Sharing and security model for local accounts'
   set_fact:
     local_accounts_raw: "{{ (secpol_file.stdout | regex_search('ForceGuest\\s*=.*')) | default('ForceGuest=1') }}"
 
