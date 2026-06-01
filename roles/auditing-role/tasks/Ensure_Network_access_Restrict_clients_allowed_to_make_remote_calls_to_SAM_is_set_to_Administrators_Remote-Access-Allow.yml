@@ -27,7 +27,8 @@
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Network access Restrict clients allowed to make remote calls to SAM' on {{ inventory_hostname }}: {{ audit_result_sam_remote }} (Current value: {{ current_sam_remote }})"
+    msg: "Audit result for 'Network access
+ Restrict clients allowed to make remote calls to SAM' on {{ inventory_hostname }}: {{ audit_result_sam_remote }} (Current value: {{ current_sam_remote }})"
 
 - name: Add header row to CSV (only once)
   local_action:
