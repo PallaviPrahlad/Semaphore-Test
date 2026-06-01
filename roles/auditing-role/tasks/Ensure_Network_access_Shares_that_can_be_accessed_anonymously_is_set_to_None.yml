@@ -8,7 +8,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Network access: Shares that can be accessed anonymously'
+- name: Parse 'Network access Shares that can be accessed anonymously'
   set_fact:
     anon_shares_raw: "{{ (secpol_file.stdout | regex_search('NullSessionShares\\s*=.*')) | default('NullSessionShares=') }}"
 
