@@ -14,17 +14,14 @@
 
 - name: Extract current value
   set_fact:
-    current_kerberos: "{{ (kerberos_raw | regex_replace('.*=','') | trim) }}"
+    current_kerberos: "{{ (kerberos_raw | regex_replace('.*=','') | trim | split(',') | last) }}"
 
-# Expected values for SupportedEncryptionTypes:
-# AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types
+# Expected numeric value for SupportedEncryptionTypes:
+# 2147483640 = AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types
 
 - name: Decide audit result
   set_fact:
-    audit_result_kerberos: >-
-      {{ 'PASSED'
-         if current_kerberos == 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types'
-         else 'FAILED' }}
+    audit_result_kerberos: "{{ 'PASSED' if (current_kerberos | int) == 2147483640 else 'FAILED' }}"
 
 - name: Display audit result
   debug:
@@ -43,5 +40,5 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types',{{ impact | default('High') }},{{ audit_result_kerberos }},{{ current_kerberos }},AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types',{{ impact | default('High') }},{{ audit_result_kerberos }},{{ current_kerberos }},2147483640"
     create: yes
