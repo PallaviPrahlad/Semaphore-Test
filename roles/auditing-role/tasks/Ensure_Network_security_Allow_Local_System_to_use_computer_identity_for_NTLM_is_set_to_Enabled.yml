@@ -22,7 +22,7 @@
 
 - name: Decide audit result
   set_fact:
-    audit_result_ntlm_identity: "{{ 'COMPLIANT' if (current_ntlm_identity | int) == 1 else 'NON-COMPLIANT' }}"
+    audit_result_ntlm_identity: "{{ 'PASSED' if (current_ntlm_identity | int) == 1 else 'FAILED' }}"
 
 - name: Display audit result
   debug:
