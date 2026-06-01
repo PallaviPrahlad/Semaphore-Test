@@ -1,0 +1,48 @@
+---
+# roles/audit/tasks/main.yml
+
+- name: Export local security policy
+  win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
+
+- name: Read exported security policy
+  win_shell: type C:\Windows\Temp\secpol.cfg
+  register: secpol_file
+
+- name: Parse 'Network security LDAP client encryption requirements'
+  set_fact:
+    ldap_encryption_raw: "{{ (secpol_file.stdout | regex_search('LDAPClientIntegrity\\s*=.*')) | default('LDAPClientIntegrity=0') }}"
+
+- name: Extract current value
+  set_fact:
+    current_ldap_encryption: "{{ (ldap_encryption_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
+
+# Values for LDAPClientIntegrity:
+# 0 = None (FAILED)
+# 1 = Negotiate signing (FAILED)
+# 2 = Negotiate sealing (PASSED)
+# 3 = Require signing (PASSED)
+# 4 = Require sealing (PASSED)
+
+- name: Decide audit result
+  set_fact:
+    audit_result_ldap_encryption: "{{ 'PASSED' if (current_ldap_encryption | int) >= 2 else 'FAILED' }}"
+
+- name: Display audit result
+  debug:
+    msg: "Audit result for 'Network security: LDAP client encryption requirements' on {{ inventory_hostname }}: {{ audit_result_ldap_encryption }} (Current value: {{ current_ldap_encryption }})"
+
+- name: Add header row to CSV (only once)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
+    create: yes
+    insertafter: BOF
+  run_once: true
+
+- name: Write audit result to CSV (numeric output, no quotes)
+  local_action:
+    module: lineinfile
+    path: /tmp/test.csv
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network security: LDAP client encryption requirements' is set to 'Negotiate sealing or higher',{{ impact | default('High') }},{{ audit_result_ldap_encryption }},{{ current_ldap_encryption }},2 or higher"
+    create: yes
