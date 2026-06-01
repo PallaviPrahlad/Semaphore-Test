@@ -12,9 +12,13 @@
   set_fact:
     local_accounts_raw: "{{ (secpol_file.stdout | regex_search('ForceGuest\\s*=.*')) | default('ForceGuest=1') }}"
 
-- name: Extract current value
+- name: Extract current values list
   set_fact:
-    current_local_accounts: "{{ (local_accounts_raw | regex_replace('.*=','') | trim | int) }}"
+    current_local_accounts_list: "{{ (local_accounts_raw | regex_replace('.*=','') | trim | split(',') | map('trim')) }}"
+
+- name: Normalize current value (take last numeric entry)
+  set_fact:
+    current_local_accounts: "{{ (current_local_accounts_list | last | int) }}"
 
 # Values for ForceGuest:
 # 0 = Classic - local users authenticate as themselves (compliant)
@@ -26,7 +30,7 @@
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Network access: Sharing and security model for local accounts' on {{ inventory_hostname }}: {{ audit_result_local_accounts }} (Current value: {{ current_local_accounts }})"
+    msg: "Audit result for 'Network access: Sharing and security model for local accounts' on {{ inventory_hostname }}: {{ audit_result_local_accounts }} (Raw value: {{ current_local_accounts_list }}, Effective value: {{ current_local_accounts }})"
 
 - name: Add header row to CSV (only once)
   local_action:
