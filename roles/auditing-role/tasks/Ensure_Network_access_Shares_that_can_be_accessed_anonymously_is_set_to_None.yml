@@ -8,24 +8,28 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Network access Shares that can be accessed anonymously'
+- name: Parse 'Network access: Shares that can be accessed anonymously'
   set_fact:
     anon_shares_raw: "{{ (secpol_file.stdout | regex_search('NullSessionShares\\s*=.*')) | default('NullSessionShares=') }}"
 
-- name: Extract current value
+- name: Extract current value list
   set_fact:
-    current_anon_shares: "{{ (anon_shares_raw | regex_replace('.*=','') | trim) }}"
+    current_anon_shares_list: "{{ (anon_shares_raw | regex_replace('.*=','') | trim | split(',') | map('trim')) }}"
+
+- name: Normalize current value
+  set_fact:
+    current_anon_shares: "{{ current_anon_shares_list | reject('equalto','') | list }}"
 
 # Expected value:
-# None → represented as empty string (null) after '=' in secedit export
+# None → compliant if list is empty OR only contains blanks
 
 - name: Decide audit result
   set_fact:
-    audit_result_anon_shares: "{{ 'PASSED' if (current_anon_shares is not defined or current_anon_shares == '') else 'FAILED' }}"
+    audit_result_anon_shares: "{{ 'PASSED' if (current_anon_shares | length) == 0 else 'FAILED' }}"
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Network access: Shares that can be accessed anonymously' on {{ inventory_hostname }}: {{ audit_result_anon_shares }} (Current value: {{ current_anon_shares | default('None') }})"
+    msg: "Audit result for 'Network access: Shares that can be accessed anonymously' on {{ inventory_hostname }}: {{ audit_result_anon_shares }} (Raw value: {{ current_anon_shares_list }}, Effective value: {{ current_anon_shares | default('None') }})"
 
 - name: Add header row to CSV (only once)
   local_action:
@@ -40,5 +44,5 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None',{{ impact | default('High') }},{{ audit_result_anon_shares }},{{ current_anon_shares | default('None') }},None"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None',{{ impact | default('High') }},{{ audit_result_anon_shares }},{{ current_anon_shares | join(';') | default('None') }},None"
     create: yes
