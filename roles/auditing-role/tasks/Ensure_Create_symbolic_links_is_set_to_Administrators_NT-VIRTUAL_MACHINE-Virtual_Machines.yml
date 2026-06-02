@@ -36,6 +36,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Create symbolic links' is set to 'Administrators, NT VIRTUAL MACHINE\\Virtual Machines',{{ impact }},{{ audit_result }},{{ create_symlinks | default('N/A') }},Administrators,NT VIRTUAL MACHINE\\Virtual Machines"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Create symbolic links' is set to 'Administrators NT VIRTUAL MACHINE\\Virtual Machines',{{ impact }},{{ audit_result }},{{ create_symlinks | default('N/A') }},Administrators NT VIRTUAL MACHINE\\Virtual Machines"
     create: yes
 

@@ -40,5 +40,5 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types',{{ impact | default('High') }},{{ audit_result_kerberos }},{{ current_kerberos }},2147483640"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1 AES256_HMAC_SHA1 Future encryption types',{{ impact | default('High') }},{{ audit_result_kerberos }},{{ current_kerberos }},2147483640"
     create: yes

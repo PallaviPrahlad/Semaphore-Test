@@ -31,7 +31,7 @@
 - name: Add header row to CSV (only once)
   local_action:
     module: lineinfile
-    path: /tmp/modify_firmware_audit.csv
+    path: /tmp/test.csv
     line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
     create: yes
     insertafter: BOF

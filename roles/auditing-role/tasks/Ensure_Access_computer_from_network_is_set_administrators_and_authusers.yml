@@ -36,6 +36,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Access this computer from the network' is set to 'Administrators, Authenticated Users',{{ impact }},{{ audit_result }},{{ access_network | default('N/A') }},Administrators,Authenticated Users"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Access this computer from the network' is set to 'Administrators  Authenticated Users',{{ impact }},{{ audit_result }},{{ access_network | default('N/A') }},Administrators,Authenticated Users"
     create: yes
 

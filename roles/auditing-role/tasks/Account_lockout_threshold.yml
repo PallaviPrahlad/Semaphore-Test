@@ -41,5 +41,5 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempt(s), but not 0',{{ impact }},{{ audit_result }},{{ lockout_threshold | default('N/A') }},5 or fewer attempts (not 0)"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempt(s) but not 0',{{ impact }},{{ audit_result }},{{ lockout_threshold | default('N/A') }},5 or fewer attempts (not 0)"
     create: yes

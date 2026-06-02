@@ -38,6 +38,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Adjust memory quotas for a process' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE',{{ impact }},{{ audit_result }},{{ adjust_memory_quotas | default('N/A') }},*S-1-5-19,*S-1-5-20,*S-1-5-32-544"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Adjust memory quotas for a process' is set to 'Administrators LOCAL SERVICE NETWORK SERVICE',{{ impact }},{{ audit_result }},{{ adjust_memory_quotas | default('N/A') }},*S-1-5-19,*S-1-5-20,*S-1-5-32-544"
     create: yes
 

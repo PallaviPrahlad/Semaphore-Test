@@ -31,7 +31,7 @@
 - name: Add header row to CSV (only once)
   local_action:
     module: lineinfile
-    path: /tmp/increase_priority_audit.csv
+    path: /tmp/test.csv
     line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
     create: yes
     insertafter: BOF
@@ -41,6 +41,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Increase scheduling priority' is set to 'Administrators, Window Manager\\Window Manager Group',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Administrators;Window Manager\\Window Manager Group"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Increase scheduling priority' is set to 'Administrators-Window Manager\\Window Manager Group',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Administrators;Window Manager\\Window Manager Group"
     create: yes
 

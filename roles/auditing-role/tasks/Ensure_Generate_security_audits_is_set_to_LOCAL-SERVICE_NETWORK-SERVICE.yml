@@ -41,6 +41,6 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},LOCAL SERVICE,NETWORK SERVICE"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Generate security audits' is set to 'LOCAL SERVICE-NETWORK SERVICE',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},LOCAL SERVICE-NETWORK SERVICE"
     create: yes
 
