@@ -8,7 +8,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Network security Restrict NTLM: Audit Incoming NTLM Traffic'
+- name: Parse 'Network security Restrict NTLM Audit Incoming NTLM Traffic'
   set_fact:
     ntlm_incoming_raw: "{{ (secpol_file.stdout | regex_search('AuditNTLMInDomain\\s*=.*')) | default('AuditNTLMInDomain=0') }}"
 
