@@ -1,4 +1,6 @@
 ---
+# roles/audit/tasks/main.yml
+
 - name: Export local security policy
   win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
 
@@ -14,11 +16,11 @@
   set_fact:
     current: "{{ deny_locally_raw | regex_replace('.*=','') | trim | split(',') | map('trim') | list }}"
 
+# Pass only if Guest SID is present
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set expected = ['*S-1-5-32-546'] %}   # Guests SID
-      {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
+      {% if '*S-1-5-32-546' in current %}
       PASSED
       {% else %}
       FAILED
@@ -31,6 +33,4 @@
 - name: Add header row to CSV (only once)
   local_action:
     module: lineinfile
-    path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Deny log on locally' includes only 'Guests',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Guests"
-    create: yes 
+    path:
