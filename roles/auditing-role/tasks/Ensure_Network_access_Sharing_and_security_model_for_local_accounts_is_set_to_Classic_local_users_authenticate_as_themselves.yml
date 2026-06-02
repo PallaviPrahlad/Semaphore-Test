@@ -17,21 +17,33 @@
     current_local_accounts: "{{ (local_accounts_raw | regex_replace('.*=','') | trim | split(',') | last | int) }}"
 
 # Values for ForceGuest:
-# 0 = Classic - local users authenticate as themselves (compliant)
-# 1 = Guest only - local users authenticate as Guest (non-compliant)
+# 0 = Classic - local users authenticate as themselves (compliant → PASSED)
+# 1 = Guest only - local users authenticate as Guest (non-compliant → FAILED)
 
 - name: Decide audit result
   set_fact:
-    audit_result_local_accounts: "{{ 'COMPLIANT' if (current_local_accounts | int) == 0 else 'NON-COMPLIANT' }}"
+    audit_result_local_accounts: >-
+      {% if current_local_accounts == 0 %}
+      PASSED
+      {% else %}
+      FAILED
+      {% endif %}
 
 - name: Display audit result
   debug:
-    msg: "Audit result for 'Network access: Sharing and security model for local accounts' on {{ inventory_hostname }}: {{ audit_result_local_accounts }} (Current value: {{ current_local_accounts }})"
+    msg: "Audit result for 'Network access Sharing and security model for local accounts' on {{ inventory_hostname }}: {{ audit_result_local_accounts }} (Current value: {{ current_local_accounts }})"
+
+- name: Ensure CSV directory exists
+  local_action:
+    module: file
+    path: /tmp
+    state: directory
+  run_once: true
 
 - name: Add header row to CSV (only once)
   local_action:
     module: lineinfile
-    path: /tmp/test.csv
+    path: /tmp/test.csv   # change to C:\\Temp\\test.csv if controller is Windows
     line: "Server Name,Timestamp,OS,Version,IPAddress,Env,Control,Impact,Result,Current_value,Expected_value"
     create: yes
     insertafter: BOF
@@ -40,6 +52,6 @@
 - name: Write audit result to CSV (numeric output, no quotes)
   local_action:
     module: lineinfile
-    path: /tmp/test.csv
+    path: /tmp/test.csv   # change to C:\\Temp\\test.csv if controller is Windows
     line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env | default('N/A') }},Ensure 'Network access: Sharing and security model for local accounts' is set to 'Classic - local users authenticate as themselves',{{ impact | default('High') }},{{ audit_result_local_accounts }},{{ current_local_accounts }},Classic"
     create: yes
