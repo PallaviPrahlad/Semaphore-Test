@@ -1,4 +1,6 @@
 ---
+# roles/audit/tasks/main.yml
+
 - name: Export local security policy
   win_command: secedit /export /cfg C:\Windows\Temp\secpol.cfg
 
@@ -14,14 +16,12 @@
   set_fact:
     current: "{{ impersonate_raw | regex_replace('.*=','') | trim | split(',') | map('trim') | list }}"
 
+# Expected compliant accounts
 - name: Decide audit result
   set_fact:
     audit_result: >-
-      {% set expected_base = ['*S-1-5-19','*S-1-5-20','*S-1-32-544','*S-1-5-6'] %}   # Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE
-      {% set expected_iis = expected_base + ['IIS_IUSRS'] %}
-      {% if current | difference(expected_base) | length == 0 and expected_base | difference(current) | length == 0 %}
-      PASSED
-      {% elif current | difference(expected_iis) | length == 0 and expected_iis | difference(current) | length == 0 %}
+      {% set expected = ['*S-1-5-19','*S-1-5-20','*S-1-5-32-544','*S-1-5-6'] %}
+      {% if current | difference(expected) | length == 0 and expected | difference(current) | length == 0 %}
       PASSED
       {% else %}
       FAILED
@@ -44,6 +44,5 @@
   local_action:
     module: lineinfile
     path: /tmp/test.csv
-    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Impersonate a client after authentication' is set to 'Administrators-LOCAL SERVICE-NETWORK SERVICE-SERVICE' (and IIS_IUSRS if IIS installed),{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},Administrators-LOCAL SERVICE-NETWORK SERVICE-SERVICE"
+    line: "{{ ansible_fqdn }},{{ now(fmt='%Y-%m-%d %H:%M:%S') }},{{ ansible_os_name }},{{ ansible_distribution_version }},{{ inventory_hostname }},{{ env }},Ensure 'Impersonate a client after authentication' is set to '*S-1-5-19;*S-1-5-20;*S-1-5-32-544;*S-1-5-6',{{ impact }},{{ audit_result }},{{ current | join(';') | default('N/A') }},*S-1-5-19;*S-1-5-20;*S-1-5-32-544;*S-1-5-6"
     create: yes
-
