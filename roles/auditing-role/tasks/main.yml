@@ -26,8 +26,8 @@
 #- import_tasks: Ensure_Debug_programs_is_set_to_Administrators.yml
 #- import_tasks: Ensure_Deny_access_to_computer_the_network_to_include_Guests_Local-account_member_of_Administrators_group.yml
 #- import_tasks: Ensure_Deny_log_on_as_batch_job_to_include_Guests.yml
-- import_tasks: Ensure_Deny_log_on_as_service_to_include_Guests.yml
-#- import_tasks: Ensure_Deny_log_on_locally_to_include_Guests.yml
+#- import_tasks: Ensure_Deny_log_on_as_service_to_include_Guests.yml
+- import_tasks: Ensure_Deny_log_on_locally_to_include_Guests.yml
 #- import_tasks: Ensure_Deny_log_on_through_Remote_Desktop_Services_is_set_to_Guests_Local_account.yml
 #- import_tasks: Ensure_Enable_computer_user_accounts_to_be_trusted_for_delegation_set_to_No-One.yml
 #- import_tasks: Ensure_Force_shutdown_from_remote_system_set_to_Administrators.yml
