@@ -8,7 +8,7 @@
   win_shell: type C:\Windows\Temp\secpol.cfg
   register: secpol_file
 
-- name: Parse 'Network security Restrict NTLM: Outgoing NTLM traffic to remote servers'
+- name: Parse 'Network security Restrict NTLM Outgoing NTLM traffic to remote servers'
   set_fact:
     ntlm_outgoing_raw: "{{ (secpol_file.stdout | regex_search('RestrictSendingNTLMTraffic\\s*=.*')) | default('RestrictSendingNTLMTraffic=0') }}"
 
