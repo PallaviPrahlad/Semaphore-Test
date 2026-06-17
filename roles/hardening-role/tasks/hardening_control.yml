@@ -97,11 +97,11 @@
 #    key: SeInteractiveLogonRight
 #    value: Administrators
 
-- name: Ensure Allow log on through Remote Desktop Services
-  community.windows.win_security_policy:
-    section: System Access
-    key: SeRemoteInteractiveLogonRight
-    value: Administrators, Remote Desktop Users,Power Users
+#- name: Ensure Allow log on through Remote Desktop Services
+#  community.windows.win_security_policy:
+#    section: System Access
+#    key: SeRemoteInteractiveLogonRight
+#    value: Administrators, Remote Desktop Users,Power Users
 
 - name: Ensure Back up files and directories
   community.windows.win_security_policy:
