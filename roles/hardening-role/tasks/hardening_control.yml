@@ -33,7 +33,7 @@
 
 - name: Relax minimum password length limits
   ansible.windows.win_regedit:
-    path: HKLM\SYSTEM\CurrentControlSet\Control\SAM
+    path: HKLM:\SYSTEM\CurrentControlSet\Control\SAM
     name: RelaxMinimumPasswordLengthLimits
     data: 1
     type: dword
