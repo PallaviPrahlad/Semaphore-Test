@@ -91,11 +91,11 @@
 #    key: SeIncreaseQuotaPrivilege
 #    value: Administrators, LOCAL SERVICE, NETWORK SERVICE
 
-- name: Ensure Allow log on locally
-  community.windows.win_security_policy:
-    section: System Access
-    key: SeInteractiveLogonRight
-    value: Administrators
+#- name: Ensure Allow log on locally
+#  community.windows.win_security_policy:
+#    section: System Access
+#    key: SeInteractiveLogonRight
+#    value: Administrators
 
 - name: Ensure Allow log on through Remote Desktop Services
   community.windows.win_security_policy:
