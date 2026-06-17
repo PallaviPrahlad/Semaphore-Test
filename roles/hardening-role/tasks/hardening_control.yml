@@ -34,7 +34,7 @@
 - name: Relax minimum password length limits
   community.windows.win_security_policy:
     section: System Access
-    key: System\CurrentControlSet\Control\SAM\RelaxMinimumPasswordLengthLimits
+    key: RelaxMinimumPasswordLengthLimits
     value: 1
 
 - name: Store passwords using reversible encryption
