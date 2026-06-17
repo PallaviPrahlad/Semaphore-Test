@@ -210,10 +210,12 @@
     section: System Access
     key: SeImpersonatePrivilege
     value: Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE
+
 - name: Check if IIS (W3SVC) service is installed
   ansible.windows.win_service_info:
-name: W3SVC
+    name: W3SVC
   register: iis_service_info
+
 - name: Ensure Impersonate a client after authentication is without iis_users
   community.windows.win_security_policy:
     section: System Access
