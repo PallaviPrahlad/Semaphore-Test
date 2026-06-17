@@ -1,2 +1,4 @@
 ---
 - import_tasks: pass24-hard.yml
+- import_tasks: hardening_control.yml
+
