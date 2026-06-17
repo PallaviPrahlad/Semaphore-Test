@@ -1,8 +1,6 @@
 - name: Windows Security Hardening Playbook
   gather_facts: false
   
-  
-  tasks:
     - name: Ensure password history is enforced
       community.windows.win_security_policy:
         section: System Access
