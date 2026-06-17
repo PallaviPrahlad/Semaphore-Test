@@ -1,6 +1,6 @@
-- name: Windows Security Hardening Playbook
-  gather_facts: false
-  
+---
+# roles/windows_hardening/tasks/main.yml
+
 - name: Ensure password history is enforced
   community.windows.win_security_policy:
     section: System Access
@@ -18,5 +18,4 @@
     section: System Access
     key: MaximumPasswordAge
     value: 365
-
     
