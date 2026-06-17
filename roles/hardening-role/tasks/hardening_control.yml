@@ -31,11 +31,11 @@
     key: PasswordComplexity
     value: 1
 
-- name: Relax minimum password length limits
-  community.windows.win_security_policy:
-    section: System Access
-    key: RelaxMinimumPasswordLengthLimits
-    value: 1
+#- name: Relax minimum password length limits
+#  community.windows.win_security_policy:
+#    section: System Access
+#    key: RelaxMinimumPasswordLengthLimits
+#    value: 1
 
 - name: Store passwords using reversible encryption
   community.windows.win_security_policy:
