@@ -82,9 +82,9 @@
 
 - name: Ensure Access this computer from the network
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeNetworkLogonRight
-    value: Users, Administrators
+    value: Administrators, Users
 
 - name: Ensure Act as part of the operating system
   community.windows.win_security_policy:
