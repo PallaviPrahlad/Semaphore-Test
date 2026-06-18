@@ -120,7 +120,7 @@
   community.windows.win_security_policy:
     section: Privilege Rights
     key: SeSystemtimePrivilege
-    value: "*S-1-5-32-544,*S-1-5-19"
+    value: "*S-1-5-32-19,*S-1-5-544"
 
 - name: Ensure Change the time zone
   community.windows.win_security_policy:
