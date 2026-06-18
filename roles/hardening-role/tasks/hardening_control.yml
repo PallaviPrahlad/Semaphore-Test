@@ -92,29 +92,35 @@
     key: SeTcbPrivilege
     value: 
 
-#- name: Ensure Adjust memory quotas for a process
-#  community.windows.win_security_policy:
-#    section: System Access
-#    key: SeIncreaseQuotaPrivilege
-#    value: Administrators, LOCAL SERVICE, NETWORK SERVICE
+- name: Ensure Adjust memory quotas for a process
+  community.windows.win_security_policy:
+    section: System Access
+    key: SeIncreaseQuotaPrivilege
+    value: Administrators, LOCAL SERVICE, NETWORK SERVICE
 
-#- name: Ensure Allow log on locally
-#  community.windows.win_security_policy:
-#    section: System Access
-#    key: SeInteractiveLogonRight
-#    value: Administrators
+- name: Ensure Adjust memory quotas for a process
+  community.windows.win_security_policy:
+    section: Privilege Rights
+    key: SeIncreaseQuotaPrivilege
+    value: "*S-1-5-32-544,*S-1-5-19,*S-1-5-20"
 
-#- name: Ensure Allow log on through Remote Desktop Services
-#  community.windows.win_security_policy:
-#    section: System Access
-#    key: SeRemoteInteractiveLogonRight
-#    value: Administrators, Remote Desktop Users,Power Users
+- name: Ensure Allow log on locally
+  community.windows.win_security_policy:
+    section: Privilege Rights
+    key: SeInteractiveLogonRight
+    value: "*S-1-5-32-544"
+
+- name: Ensure Allow log on through Remote Desktop Services
+  community.windows.win_security_policy:
+    section: Privilege Rights
+    key: SeRemoteInteractiveLogonRight
+    value: "*S-1-5-32-544,*S-1-5-32-555,*S-1-5-32-547"
 
 - name: Ensure Back up files and directories
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeBackupPrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
   
 - name: Ensure Change the system time
   community.windows.win_security_policy:
