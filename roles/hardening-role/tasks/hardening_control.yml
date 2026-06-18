@@ -202,7 +202,7 @@
 
 - name: Ensure Force shutdown from a remote system
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeRemoteShutdownPrivilege
     value: "*S-1-5-32-544"
 
