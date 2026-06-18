@@ -178,7 +178,7 @@
 
 - name: Ensure Deny log on as a service
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeDenyServiceLogonRight
     value: "*S-1-5-32-546"
 
