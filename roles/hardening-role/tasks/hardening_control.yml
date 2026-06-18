@@ -239,9 +239,9 @@
 
 - name: Ensure Increase scheduling priority
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeIncreaseBasePriorityPrivilege
-    value: Administrators, Window Manager\Window Manager Group
+    value: "*S-1-5-32-544,*S-1-5-90-0"
 
 - name: Ensure Load and unload device drivers
   community.windows.win_security_policy:
