@@ -154,9 +154,9 @@
 
 - name: Ensure Create symbolic links
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeCreateSymbolicLinkPrivilege
-    value: Administrators, NT VIRTUAL MACHINE\Virtual Machines
+    value: "*S-1-5-32-544,*S-1-5-83-0"
 
 - name: Ensure Debug programs
   community.windows.win_security_policy:
