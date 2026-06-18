@@ -144,7 +144,7 @@
   community.windows.win_security_policy:
     section: Privilege Rights
     key: SeCreateGlobalPrivilege
-    value: "*S-1-5-19,*S-1-5-20,*S-1-5-32-6,*S-1-5-32-544"  
+    value: "*S-1-5-19,*S-1-5-20,*S-1-5-32-544,*S-1-5-32-6"  
 
 - name: Ensure Create global objects
   community.windows.win_security_policy:
