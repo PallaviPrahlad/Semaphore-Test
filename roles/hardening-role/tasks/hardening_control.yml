@@ -208,15 +208,15 @@
 
 - name: Ensure Generate security audits
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeAuditPrivilege
-    value: LOCAL SERVICE, NETWORK SERVICE
+    value: "*S-1-5-19,*S-1-5-20"
 
 - name: Ensure Impersonate a client after authentication
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeImpersonatePrivilege
-    value: Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE
+    value: "*S-1-5-32-544,*S-1-5-19,*S-1-5-20,*S-1-5-6"
 
 - name: Check if IIS (W3SVC) service is installed
   ansible.windows.win_service_info:
