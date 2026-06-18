@@ -166,9 +166,9 @@
 
 - name: Ensure Deny access to this computer from the network
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeDenyNetworkLogonRight
-    value: Guests
+    value: "*S-1-5-32-546"
 
 - name: Ensure Deny log on as a batch job
   community.windows.win_security_policy:
