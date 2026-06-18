@@ -118,9 +118,9 @@
   
 - name: Ensure Change the system time
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeSystemtimePrivilege
-    value: Administrators, LOCAL SERVICE
+    value: "*S-1-5-32-544,*S-1-5-19"
 
 - name: Ensure Change the time zone
   community.windows.win_security_policy:
