@@ -223,11 +223,11 @@
     name: W3SVC
   register: iis_service_info
 
-- name: Ensure Impersonate a client after authentication is without iis_users
+- name: Ensure Impersonate a client after authentication is without IIS_USRS
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeImpersonatePrivilege
-    value: Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE
+    value: "*S-1-5-19,*S-1-5-20,*S-1-5-32-544,*S-1-5-6"
   when: iis_service_info.services | length == 0 or iis_service_info.services[0].state != 'running'
 
 - name: Ensure Impersonate a client after authentication is set With IIS_IUSRS
