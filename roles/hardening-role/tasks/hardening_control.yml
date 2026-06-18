@@ -172,27 +172,27 @@
 
 - name: Ensure Deny log on as a batch job
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeDenyBatchLogonRight
-    value: Guests
+    value: "*S-1-5-32-546"
 
 - name: Ensure Deny log on as a service
   community.windows.win_security_policy:
     section: System Access
     key: SeDenyServiceLogonRight
-    value: Guests
+    value: "*S-1-5-32-546"
 
 - name: Ensure Deny log on locally
   community.windows.win_security_policy:
     section: System Access
     key: SeDenyInteractiveLogonRight
-    value: Guests 
+    value: "*S-1-5-32-546"
 
 - name: Ensure Deny log on through Remote Desktop Services
   community.windows.win_security_policy:
     section: System Access
     key: SeDenyRemoteInteractiveLogonRight
-    value: Guests
+    value: "*S-1-5-32-546"
 
 - name: Ensure Enable computer and user accounts to be trusted for delegation
   community.windows.win_security_policy:
@@ -204,7 +204,7 @@
   community.windows.win_security_policy:
     section: System Access
     key: SeRemoteShutdownPrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
 
 - name: Ensure Generate security audits
   community.windows.win_security_policy:
