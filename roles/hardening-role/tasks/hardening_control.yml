@@ -130,9 +130,10 @@
 
 - name: Ensure Create a pagefile
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeCreatePagefilePrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
+
 
 - name: Ensure Create a token object
   community.windows.win_security_policy:
