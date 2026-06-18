@@ -84,7 +84,7 @@
   community.windows.win_security_policy:
     section: Privilege Rights
     key: SeNetworkLogonRight
-    value: Administrators, Users
+    value: "*S-1-5-32-544,*S-1-5-32-545"
 
 - name: Ensure Act as part of the operating system
   community.windows.win_security_policy:
