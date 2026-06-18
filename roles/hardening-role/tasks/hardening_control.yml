@@ -80,11 +80,11 @@
     key: SeTrustedCredManAccessPrivilege
     value: 
 
-#- name: Ensure Access this computer from the network
-#  community.windows.win_security_policy:
-#    section: System Access
-#    key: SeNetworkLogonRight
-#    value: Users, Administrators
+- name: Ensure Access this computer from the network
+  community.windows.win_security_policy:
+    section: System Access
+    key: SeNetworkLogonRight
+    value: Users, Administrators
 
 - name: Ensure Act as part of the operating system
   community.windows.win_security_policy:
