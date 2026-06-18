@@ -182,15 +182,15 @@
     key: SeDenyServiceLogonRight
     value: "*S-1-5-32-546"
 
-- name: Ensure Deny log on locally
+- name: Ensure Deny log on as a service
   community.windows.win_security_policy:
-    section: System Access
-    key: SeDenyInteractiveLogonRight
+    section: Privilege Rights
+    key: SeDenyServiceLogonRight
     value: "*S-1-5-32-546"
 
 - name: Ensure Deny log on through Remote Desktop Services
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeDenyRemoteInteractiveLogonRight
     value: "*S-1-5-32-546"
 
