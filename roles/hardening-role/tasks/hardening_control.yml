@@ -245,9 +245,9 @@
 
 - name: Ensure Load and unload device drivers
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeLoadDriverPrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
 
 - name: Ensure Lock pages in memory
   community.windows.win_security_policy:
@@ -255,11 +255,11 @@
     key: SeLockMemoryPrivilege
     value: 
   
-- name:  Ensure Manage auditing and security log
+- name: Ensure Manage auditing and security log
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeSecurityPrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
 
 - name: Ensure Modify an object label
   community.windows.win_security_policy:
@@ -269,27 +269,27 @@
 
 - name: Ensure Modify firmware environment values
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeSystemEnvironmentPrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
 
 - name: Ensure Perform volume maintenance tasks
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeManageVolumePrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
 
 - name: Ensure Profile single process
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeProfileSingleProcessPrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
 
 - name: Ensure Profile system performance
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeSystemProfilePrivilege
-    value: Administrators, NT SERVICE\WdiServiceHost
+    value: "*S-1-5-32-544,NT SERVICE\\WdiServiceHost"
 
 - name: Ensure Replace a process level token
   community.windows.win_security_policy:
