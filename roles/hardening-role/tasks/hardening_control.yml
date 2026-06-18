@@ -92,11 +92,6 @@
     key: SeTcbPrivilege
     value: 
 
-- name: Ensure Adjust memory quotas for a process
-  community.windows.win_security_policy:
-    section: System Access
-    key: SeIncreaseQuotaPrivilege
-    value: Administrators, LOCAL SERVICE, NETWORK SERVICE
 
 - name: Ensure Adjust memory quotas for a process
   community.windows.win_security_policy:
