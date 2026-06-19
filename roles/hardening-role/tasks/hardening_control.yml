@@ -293,9 +293,9 @@
 
 - name: Ensure Replace a process level token
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeAssignPrimaryTokenPrivilege
-    value: LOCAL SERVICE, NETWORK SERVICE
+    value: "*S-1-5-19,*S-1-5-20"
 
 - name: Ensure Restore files and directories
   community.windows.win_security_policy:
