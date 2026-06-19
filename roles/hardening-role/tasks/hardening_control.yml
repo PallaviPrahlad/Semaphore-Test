@@ -299,21 +299,21 @@
 
 - name: Ensure Restore files and directories
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeRestorePrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
 
 - name: Ensure Shut down the system
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeShutdownPrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
 
 - name: Ensure Take ownership of files or other objects
   community.windows.win_security_policy:
-    section: System Access
+    section: Privilege Rights
     key: SeTakeOwnershipPrivilege
-    value: Administrators
+    value: "*S-1-5-32-544"
 
 - name: Ensure Accounts Guest account status
   community.windows.win_security_policy:
