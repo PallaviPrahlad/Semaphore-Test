@@ -321,7 +321,7 @@
     key: EnableGuestAccount
     value: 0
 
-- name: Ensure Accounts: Limit local account use of blank passwords to console logon only
+- name: Ensure Accounts Limit local account use of blank passwords to console logon only
   community.windows.win_security_policy:
     section: System Access
     key: LimitBlankPasswordUse
