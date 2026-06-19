@@ -322,10 +322,11 @@
     value: 0
 
 - name: Ensure Accounts Limit local account use of blank passwords to console logon only
-  community.windows.win_security_policy:
-    section: System Access
-    key: LimitBlankPasswordUse
-    value: 1
+  ansible.windows.win_regedit:
+    path: HKLM\SYSTEM\CurrentControlSet\Control\Lsa
+    name: LimitBlankPasswordUse
+    data: 1
+    type: dword
 
 - name: Configure Accounts Rename administrator account
   community.windows.win_security_policy:
