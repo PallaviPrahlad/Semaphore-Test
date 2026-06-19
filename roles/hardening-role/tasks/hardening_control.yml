@@ -321,9 +321,9 @@
     key: EnableGuestAccount
     value: 0
 
-- name: Ensure Accounts Limit local account use of blank passwords to console logon only
+- name: Ensure Accounts: Limit local account use of blank passwords to console logon only
   ansible.windows.win_regedit:
-    path: HKLM\SYSTEM\CurrentControlSet\Control\Lsa
+    path: HKLM:\SYSTEM\CurrentControlSet\Control\Lsa
     name: LimitBlankPasswordUse
     data: 1
     type: dword
