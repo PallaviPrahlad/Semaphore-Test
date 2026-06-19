@@ -332,7 +332,7 @@
   community.windows.win_security_policy:
     section: System Access
     key: NewAdministratorName
-    value: e999000
+    value: E999000
 
 - name: Configure Accounts Rename guest account
   community.windows.win_security_policy:
