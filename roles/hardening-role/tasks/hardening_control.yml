@@ -368,7 +368,7 @@
     data: 1
     type: dword
 
-- name: Enforce Domain member: Digitally encrypt secure channel data (when possible)
+- name: Enforce Domain member Digitally encrypt secure channel data (when possible)
   ansible.windows.win_regedit:
     path: HKLM:\System\CurrentControlSet\Services\Netlogon\Parameters
     name: SealSecureChannel
