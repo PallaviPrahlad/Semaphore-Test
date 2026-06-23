@@ -340,11 +340,12 @@
     key: NewGuestName
     value: DisabledGuest
 
-- name: Ensure Audit Force audit policy subcategory settings override category settings
+- name: Ensure Audit: Force audit policy subcategory settings override category settings
   community.windows.win_security_policy:
-    section: System Access
-    key: SCENoApplyLegacyAuditPolicy
+    section: Registry Values
+    key: MACHINE\System\CurrentControlSet\Control\Lsa\SCENoApplyLegacyAuditPolicy
     value: 1
+
 
 - name: Ensure Audit Shut down system immediately if unable to log security audits
   community.windows.win_security_policy:
