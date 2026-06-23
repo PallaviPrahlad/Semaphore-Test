@@ -382,7 +382,7 @@
     data: 1
     type: dword
 
-- name: Enforce Domain member: Disable machine account password changes
+- name: Enforce Domain member Disable machine account password changes
   ansible.windows.win_regedit:
     path: HKLM:\System\CurrentControlSet\Services\Netlogon\Parameters
     name: DisablePasswordChange
