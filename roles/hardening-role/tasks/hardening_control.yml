@@ -389,11 +389,12 @@
     data: 0
     type: dword
 
-- name: Ensure Domain member Maximum machine account password age
-  community.windows.win_security_policy:
-    section: System Access
-    key: MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\MaximumPasswordAge
-    value: 30
+- name: Enforce Domain member: Maximum machine account password age
+  ansible.windows.win_regedit:
+    path: HKLM:\System\CurrentControlSet\Services\Netlogon\Parameters
+    name: MaximumPasswordAge
+    data: 30
+    type: dword
 
 - name: Ensure Domain member Require strong (Windows 2000 or later) session key
   community.windows.win_security_policy:
