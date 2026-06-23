@@ -389,7 +389,7 @@
     data: 0
     type: dword
 
-- name: Enforce Domain member: Maximum machine account password age
+- name: Enforce Domain member Maximum machine account password age
   ansible.windows.win_regedit:
     path: HKLM:\System\CurrentControlSet\Services\Netlogon\Parameters
     name: MaximumPasswordAge
