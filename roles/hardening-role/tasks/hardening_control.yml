@@ -396,11 +396,12 @@
     data: 30
     type: dword
 
-- name: Ensure Domain member Require strong (Windows 2000 or later) session key
-  community.windows.win_security_policy:
-    section: System Access
-    key: MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\RequireStrongKey
-    value: Enabled
+- name: Enforce Domain member: Require strong (Windows 2000 or later) session key
+  ansible.windows.win_regedit:
+    path: "HKLM:\\System\\CurrentControlSet\\Services\\Netlogon\\Parameters"
+    name: RequireStrongKey
+    data: 1
+    type: dword
 
 - name: Ensure Interactive logon Do not require CTRL+ALT+DEL 
   community.windows.win_security_policy:
