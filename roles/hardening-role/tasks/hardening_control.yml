@@ -403,41 +403,47 @@
     data: 1
     type: dword
 
-- name: Ensure Interactive logon Do not require CTRL+ALT+DEL 
-  community.windows.win_security_policy:
-    section: System Access
-    key: MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\DisableCAD
-    value: Disabled
+- name: Enforce Interactive logon Do not require CTRL+ALT+DEL
+  ansible.windows.win_regedit:
+    path: "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+    name: DisableCAD
+    data: 0
+    type: dword
 
-- name: Ensure Interactive logon Don't display last signed-in
-  community.windows.win_security_policy:
-    section: System Access
-    key: MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\DontDisplayLastUserName
-    value: Enabled
+- name: Enforce Interactive logon Don't display last signed-in
+  ansible.windows.win_regedit:
+    path: "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+    name: DontDisplayLastUserName
+    data: 1
+    type: dword
 
-- name: Ensure Interactive logon Machine inactivity limit
-  community.windows.win_security_policy:
-    section: System Access
-    key: MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\InactivityTimeoutSecs
-    value: 1800
+- name: Enforce Interactive logon Machine inactivity limit
+  ansible.windows.win_regedit:
+    path: "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+    name: InactivityTimeoutSecs
+    data: 1800
+    type: dword
 
 - name: Configure Interactive logon Message text for users attempting to log on
-  community.windows.win_security_policy:
-    section: System Access
-    key: MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\LegalNoticeText
-    value: "Honeywell International Inc. and the Honeywell affiliate that employs you (collectively, Honeywell), the Data Controller, owns, licenses, and operates information systems and assets, including but not limited to computer systems, laptops, telephonic devices, scanners, printers, email and text messaging services, and similar devices which together with the information and data processed therein are referenced herein as 'Honeywell Information Resources'. Honeywell also employs visual recording devices to record activity occurring at Honeywell locations. Honeywell Information Resources may include information that requires additional protection such as Controlled Unclassified Information, Covered Defense Information and Honeywell Confidential Information. You may not access or attempt to access such information unless you have been trained to protect this content and are specifically authorized to do so.For more information about how Honeywell processes your Personal Data and for any applicable data privacy rights, please refer to the Honeywell Global Data Privacy Policy and the Employee Privacy Notice for your country on HR Direct."
+  ansible.windows.win_regedit:
+    path: "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+    name: LegalNoticeText
+    data: "Honeywell International Inc. and the Honeywell affiliate that employs you (collectively, Honeywell), the Data Controller, owns, licenses, and operates information systems and assets, including but not limited to computer systems, laptops, telephonic devices, scanners, printers, email and text messaging services, and similar devices which together with the information and data processed therein are referenced herein as 'Honeywell Information Resources'. Honeywell also employs visual recording devices to record activity occurring at Honeywell locations. Honeywell Information Resources may include information that requires additional protection such as Controlled Unclassified Information, Covered Defense Information and Honeywell Confidential Information. You may not access or attempt to access such information unless you have been trained to protect this content and are specifically authorized to do so.For more information about how Honeywell processes your Personal Data and for any applicable data privacy rights, please refer to the Honeywell Global Data Privacy Policy and the Employee Privacy Notice for your country on HR Direct"
+    type: string
 
 - name: Configure Interactive logon Message title for users attempting to log on
-  community.windows.win_security_policy:
-    section: System Access
-    key: MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\LegalNoticeCaption
-    value: "Honeywell Acceptable Use"
+  ansible.windows.win_regedit:
+    path: "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+    name: LegalNoticeCaption
+    data: "Honeywell Acceptable Use"
+    type: string
 
-- name: Ensure Interactive logon Prompt user to change password before expiration
-  community.windows.win_security_policy:
-    section: System Access
-    key: MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\PasswordExpiryWarning
-    value: 5
+- name: Enforce Interactive logon Prompt user to change password before expiration
+  ansible.windows.win_regedit:
+    path: "HKLM:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon"
+    name: PasswordExpiryWarning
+    data: 5
+    type: dword
 
 - name: Ensure Interactive logon Require Domain Controller Authentication to unlock workstation
   community.windows.win_security_policy:
