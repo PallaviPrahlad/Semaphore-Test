@@ -396,7 +396,7 @@
     data: 30
     type: dword
 
-- name: Enforce Domain member: Require strong (Windows 2000 or later) session key
+- name: Enforce Domain member Require strong (Windows 2000 or later) session key
   ansible.windows.win_regedit:
     path: "HKLM:\\System\\CurrentControlSet\\Services\\Netlogon\\Parameters"
     name: RequireStrongKey
